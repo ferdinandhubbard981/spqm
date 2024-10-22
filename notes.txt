@@ -1,0 +1,1 @@
+This project aims to modify the existing odoo invoicing or accounting app to generate invoices that have details such as the ROI of performing a certain work. This could be installing solar panels, renovating your house's chassis and insulation.

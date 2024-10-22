@@ -1,0 +1,14 @@
+The objective for the solar panel invoice generator is to make an odoo module that has all the functionality of the 'bilan maker', such that it can be seamlessly integrated into an existing odoo setup.
+
+It was noted that the solar panel installation business is falling in belgium, but that insulation (renovation) is on the rise. 
+
+If this solar panel module works, the same could be done for insulation and the selling of wood and pellet based boilers.
+
+I await the python code regarding how the formulas for calculating the ROI work.
+
+In the meantime I will gather some data from 'bilan maker' and fill the calculated fields with dummy data.
+
+I think the ideal way to go about this would be to 'extend' the accounting module, by creating another module. However I do not know if this is possible. A more feasible solution might be to create a new module solely for creating these invoices, that inherits the accounting module and uses references to entries in the invoices table.
+
+reference:
+bilan maker: https://oneclick.neopower.com/oneclick/bilan-maker
