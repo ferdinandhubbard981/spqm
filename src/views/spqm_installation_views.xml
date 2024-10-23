@@ -1,0 +1,7 @@
+<odoo>
+  <record id="spqm_installation_action" model="ir.actions.act_window">
+    <field name="name">Installations</field>
+    <field name="res_model">spqm.installation</field>
+    <field name="view_mode">list,form</field>
+  </record>
+</odoo>

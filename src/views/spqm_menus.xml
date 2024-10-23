@@ -1,0 +1,10 @@
+<odoo>
+  <menuitem id="spqm_menu_root" name="Solar Panel Quote Maker">
+    <menuitem id="spqm_installations_menu" name="Installations">
+      <menuitem id="spqm_installations_menu_action" action="spqm_installation_action" />
+    </menuitem>
+    <!-- <menuitem id="estate_settings_menu" name="Settings"> -->
+    <!--   <menuitem id="estate_property_type_menu_action" action="estate_property_type_action" /> -->
+    <!-- </menuitem> -->
+  </menuitem>
+</odoo>
