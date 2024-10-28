@@ -6,6 +6,7 @@
     'data': [
         'security/ir.model.access.csv',
         'views/spqm_installation_views.xml',
+        'views/spqm_installation_zone_views.xml',
         'views/spqm_menus.xml'
     ],
     'license': 'Other proprietary'
