@@ -1,2 +1,0 @@
-configv2.yaml
-templates/*.html
