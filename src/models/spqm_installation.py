@@ -6,6 +6,8 @@ class Installation(models.Model):
     _description = "Represents all the data from a solar panel installation site to generate a quote"
     client = fields.Many2many("res.partner", string="Client")
     zone_ids = fields.One2many("spqm.installation.zone", "installation_id")
+    latitude = fields.Float()
+    longitude = fields.Float()
 
     # quote-relevant fields
     peak_power = fields.Float(readonly=True)

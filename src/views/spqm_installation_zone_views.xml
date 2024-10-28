@@ -5,9 +5,9 @@
     <field name="arch" type="xml">
       <tree>
         <field name="peak_power" />
+        <field name="loss" />
         <field name="slope" />
         <field name="azimuth" />
-        <field name="pvgis" />
       </tree>
     </field>
   </record>
@@ -19,9 +19,9 @@
       <form>
         <group>
           <field name="peak_power" />
+          <field name="loss" />
           <field name="slope" />
           <field name="azimuth" />
-          <field name="pvgis" />
         </group>
       </form>
     </field>
