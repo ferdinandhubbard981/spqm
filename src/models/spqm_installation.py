@@ -4,13 +4,13 @@ from odoo import models, fields
 class Installation(models.Model):
     _name = "spqm.installation"
     _description = "Represents all the data from a solar panel installation site to generate a quote"
-    client = fields.Many2many("res.partner", string="Client")
+    client = fields.Many2one("res.partner", string="Client")
     zone_ids = fields.One2many("spqm.installation.zone", "installation_id")
     latitude = fields.Float()
     longitude = fields.Float()
 
     # quote-relevant fields
-    peak_power = fields.Float(readonly=True)
+    peak_power = fields.Float(readonly=True, compute="_compute_peak_power")
     region = fields.Selection([], readonly=True)
     inverter_type = fields.Selection([], readonly=True)
     elec_price_buy_today = fields.Float(readonly=True)
@@ -48,3 +48,10 @@ class Installation(models.Model):
     spending_total = fields.Float(readonly=True)
     return_rate = fields.Float(readonly=True)
     nbr_year_positive = fields.Float(readonly=True)
+
+    def _compute_peak_power(self):
+        for record in self:
+            peak_power = 0
+            for zone in record.zone_ids:
+                peak_power += zone.peak_power
+            record.peak_power = peak_power
