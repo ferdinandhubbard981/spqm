@@ -6,7 +6,7 @@ import json
 class Zone(models.Model):
     _name = "spqm.installation.zone"
     _description = "The zones of an installation site. Some installation sites have multiple solar panel installation zones with distinct data"
-    installation_id = fields.Many2one("spqm.installation", required=True)
+    installation_id = fields.Many2one("spqm.installation", required=True, ondelete="cascade")
     peak_power = fields.Float()
     loss = fields.Float()
     slope = fields.Float()
@@ -22,9 +22,9 @@ class Zone(models.Model):
             monthly_electricity_generated = []
             url = 'https://re.jrc.ec.europa.eu/api/v5_2/PVcalc'
             params = dict(
-                lat=record.installatin_id.latitude,
+                lat=record.installation_id.latitude,
                 lon=record.installation_id.longitude,
-                peakpower=record.peakPower,
+                peakpower=record.peak_power,
                 loss=record.loss,
                 angle=record.slope,
                 aspect=record.azimuth,
