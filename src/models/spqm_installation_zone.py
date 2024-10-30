@@ -8,7 +8,7 @@ class Zone(models.Model):
     _name = "spqm.installation.zone"
     _description = "The zones of an installation site. Some installation sites have multiple solar panel installation zones with distinct data"
     installation_id = fields.Many2one("spqm.installation", required=True, ondelete="cascade")
-    peak_power = fields.Float(defualt=1000)
+    peak_power = fields.Float()
     loss = fields.Float()
     slope = fields.Float()
     azimuth = fields.Float()

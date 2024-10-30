@@ -8,7 +8,7 @@ class Installation(models.Model):
     client = fields.Many2one("res.partner", string="Client")
 
     # inputs
-    inverter_type = fields.Selection([("micro_inverter", "Micro Inverter"), ("inverter", "Inverter")], required=True)
+    inverter_type = fields.Selection([("micro_inverter", "Micro Inverter"), ("inverter", "Inverter")], required=True, string="Inverter Type")
     zone_ids = fields.One2many("spqm.installation.zone", "installation_id", required=True)
     latitude = fields.Float()
     longitude = fields.Float()
@@ -17,14 +17,14 @@ class Installation(models.Model):
     elec_price_sell_today_HT = fields.Float(required=True, help="The selling price of electricity in €/kWh excluding tax")
     elecVAT = fields.Float(required=True, help="the VAT of electricity as a %", default=6)
     elec_price_inflation = fields.Float(required=True, default=3)
-    elec_price_buy_today = fields.Float(compute="_compute_elec_price_buy_today")
-    elec_price_sell_today = fields.Float(compute="_compute_elec_price_sell_today")
     module_degradation_year = fields.Float(help="The degradation year-on-year of the solar panels as a % (of it's full capacity?)")
     auto_consommation_rate = fields.Float(help="the percentage of the electricity produced that is used on site")
 
     # quote-relevant fields
+    elec_price_buy_today = fields.Float(compute="_compute_elec_price_buy_today")
+    elec_price_sell_today = fields.Float(compute="_compute_elec_price_sell_today")
     monthly_production = fields.Binary(compute="_compute_monthly_production", help="the sum of the monthly production data of all zones, used to plot a graph of production/month")
-    yearly_data = fields.Binary(compute="_compute_yearly_data", help="financial data regarding the installation for x years post-installation")
+    yearly_data = fields.Binary(help="financial data regarding the installation for x years post-installation")
     peak_power = fields.Float(readonly=True, compute="_compute_peak_power")
     price_per_kw_cht = fields.Float(readonly=True)
     E_m_average = fields.Float(readonly=True)
