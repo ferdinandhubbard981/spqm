@@ -70,3 +70,6 @@ class Installation(models.Model):
 
     def _compute_yearly_data(self):
         pass
+
+    def action_generate_quote(self):
+        return self.env.ref("spqm.installation").report_action(self)

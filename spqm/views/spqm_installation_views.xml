@@ -9,9 +9,9 @@
     <field name="model">spqm.installation</field>
     <field name="arch" type="xml">
       <form string="Installations">
-        <header>
-          <button name="generate_quote" string="Generate Quote" />
-        </header>
+        <!-- <header> -->
+        <!--   <button name="action_generate_quote" type="object" string="Generate Quote" /> -->
+        <!-- </header> -->
         <sheet>
           <group>
             <field name="inverter_type" />
