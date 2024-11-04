@@ -1,13 +1,25 @@
 <odoo>
   <template id="quote_template">
     <t t-call="web.html_container">
-      <t t-foreach="docs" t-as="o">
-        <t t-call="web.external_layout">
-          <div class="page">
-            <h2>Report title</h2>
-            <p>This object's name is installation /></p>
-          </div>
-        </t>
+      <t t-foreach="docs" t-as="installation">
+        <div class="page">
+          <h2>Solar panel installaion quote</h2>
+          <p>The cost of buying electricity today is €<t t-out="installation.elec_price_buy_today"/></p>
+          <table>
+            <thead>
+              <tr>
+                <th>year</th>
+                <th>estimated production (kWh)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th>2023</th>
+                <th>10005.2</th>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </t>
     </t>
   </template>
