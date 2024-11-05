@@ -22,13 +22,13 @@
                   <t t-out="current.year" />
                 </td>
                 <td>
-                  <t t-out="current.production" />
+                  <t t-out="current.production" t-options="{'widget': 'float', 'precision': 2}" />
                 </td>
                 <td>
-                  <t t-out="current.elec_price_buy" />
+                  <t t-out="current.elec_price_buy" t-options="{'widget': 'float', 'precision': 2}" />
                 </td>
                 <td>
-                  <t t-out="current.elec_price_sell" />
+                  <t t-out="current.elec_price_sell" t-options="{'widget': 'float', 'precision': 2}" />
                 </td>
               </tr>
             </tbody>
