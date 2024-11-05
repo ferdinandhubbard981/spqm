@@ -5,30 +5,33 @@
       <t t-foreach="docs" t-as="installation">
         <div class="page">
           <h2>Solar panel installaion quote</h2>
-          <p>The cost of buying electricity today is <t t-out="installation.elec_price_buy_today" /></p>
           <table>
             <thead>
               <tr>
                 <th>year</th>
                 <th>elec production</th>
+                <th>elec consumed</th>
                 <th>elec price buy</th>
                 <th>elec price sell</th>
               </tr>
             </thead>
             <tbody>
               <t t-set="yearly_data" t-value="installation.get_yearly_data()" />
-              <tr t-foreach="yearly_data" t-as="current">
+              <tr t-foreach="yearly_data" t-as="current_year">
                 <td>
-                  <t t-out="current.year" />
+                  <t t-out="current_year.year" />
                 </td>
                 <td>
-                  <t t-out="current.production" t-options="{'widget': 'float', 'precision': 2}" />
+                  <t t-out="current_year.production" t-options="{'widget': 'float', 'precision': 2}" />
                 </td>
                 <td>
-                  <t t-out="current.elec_price_buy" t-options="{'widget': 'float', 'precision': 2}" />
+                  <t t-out="current_year.consumed" t-options="{'widget': 'float', 'precision': 2}" />
                 </td>
                 <td>
-                  <t t-out="current.elec_price_sell" t-options="{'widget': 'float', 'precision': 2}" />
+                  <t t-out="current_year.elec_price_buy" t-options="{'widget': 'float', 'precision': 2}" />
+                </td>
+                <td>
+                  <t t-out="current_year.elec_price_sell" t-options="{'widget': 'float', 'precision': 2}" />
                 </td>
               </tr>
             </tbody>

@@ -22,7 +22,7 @@ class Installation(models.Model):
     elecVAT = fields.Float(required=True, help="the VAT of electricity as a %", default=6)
     elec_price_inflation = fields.Float(required=True, default=3)
     module_degradation_year = fields.Float(default=5, help="The degradation year-on-year of the solar panels as a % (of it's full capacity?)")
-    # auto_consommation_rate = fields.Float(help="the percentage of the electricity produced that is used on site")
+    auto_consumption_rate = fields.Float(help="the percentage of the electricity produced that is used on site")
 
     # quote-relevant fields
     elec_price_buy_today = fields.Float(compute="_compute_elec_price_buy_today")
@@ -85,11 +85,12 @@ class Installation(models.Model):
             yearly_data = []
             for year in range(record.start_year, record.end_year):
                 years_installed = year - record.start_year
-                current = YearlyData(year)
-                current.elec_price_buy = record.elec_price_buy_today_HT * (1 + record.elec_price_inflation / 100) ** years_installed * (1 + record.elecVAT / 100)
-                current.elec_price_sell = record.elec_price_sell_today_HT * (1 + record.elec_price_inflation / 100) ** years_installed * (1 + record.elecVAT / 100)
-                current.production = record.e_y_total * (1 - record.module_degradation_year / 100) ** years_installed
-                yearly_data.append(current)
+                current_year = YearlyData(year)
+                current_year.elec_price_buy = record.elec_price_buy_today_HT * (1 + record.elec_price_inflation / 100) ** years_installed * (1 + record.elecVAT / 100)
+                current_year.elec_price_sell = record.elec_price_sell_today_HT * (1 + record.elec_price_inflation / 100) ** years_installed * (1 + record.elecVAT / 100)
+                current_year.production = record.e_y_total * (1 - record.module_degradation_year / 100) ** years_installed
+                current_year.consumed = current_year.production * record.auto_consumption_rate / 100
+                yearly_data.append(current_year)
 
             record.yearly_data = jsonpickle.dumps(yearly_data)
 

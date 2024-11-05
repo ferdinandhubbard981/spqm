@@ -17,7 +17,7 @@ class YearlyData:
     def __init__(self, year):
         self.year = year
         self.production = 0.0
-        # self.production_consumed = 0.0
+        self.consumed = 0.0
         self.elec_price_buy = 0.0
         # self.elec_economy = 0.0
         # self.production_sold = 0.0

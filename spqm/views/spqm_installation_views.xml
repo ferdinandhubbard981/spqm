@@ -12,15 +12,6 @@
       <tree>
         <field name="name" />
         <field name="start_year" />
-        <field name="end_year" />
-        <field name="elec_price_buy_today_HT" />
-        <field name="elec_price_sell_today_HT" />
-        <field name="elecVAT" />
-        <field name="elec_price_inflation" />
-        <field name="module_degradation_year" />
-        <field name="longitude" />
-        <field name="latitude" />
-        <field name="zone_ids" />
       </tree>
     </field>
   </record>
@@ -45,6 +36,7 @@
             <field name="module_degradation_year" />
             <field name="longitude" />
             <field name="latitude" />
+            <field name="auto_consumption_rate"/>
             <field name="zone_ids" />
             <!-- <field name=""/> -->
           </group>
