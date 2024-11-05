@@ -4,6 +4,5 @@
     <field name="model">spqm.installation</field>
     <field name="report_type">qweb-pdf</field>
     <field name="report_name">spqm.quote_template</field>
-    <field name="binding_model_id" ref="model_spqm_installation" />
   </record>
 </odoo>
