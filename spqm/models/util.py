@@ -24,6 +24,7 @@ class YearlyData:
         self.elec_price_sell = 0.0
         self.elec_gain = 0.0
         self.total_gain = 0.0
+        self.cumulated_total = 0.0
         # self.prime = 0.0
         # self.certificat_vert_bxl = 0.0  # rebates from the brussels region
         # self.tarif_prosumer = 0.0

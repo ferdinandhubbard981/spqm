@@ -83,6 +83,7 @@ class Installation(models.Model):
     def _compute_yearly_data(self):
         for record in self:
             yearly_data = []
+            cumulated_total = 0
             for year in range(record.start_year, record.end_year):
                 years_installed = year - record.start_year
                 current_year = YearlyData(year)
@@ -94,6 +95,8 @@ class Installation(models.Model):
                 current_year.production_sold = current_year.production - current_year.consumed
                 current_year.elec_gain = current_year.production_sold * current_year.elec_price_sell
                 current_year.total_gain = current_year.elec_economy + current_year.elec_gain
+                cumulated_total += current_year.total_gain
+                current_year.cumulated_total = cumulated_total
                 yearly_data.append(current_year)
 
             record.yearly_data = jsonpickle.dumps(yearly_data)
