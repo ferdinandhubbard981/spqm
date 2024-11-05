@@ -19,10 +19,11 @@ class YearlyData:
         self.production = 0.0
         self.consumed = 0.0
         self.elec_price_buy = 0.0
-        # self.elec_economy = 0.0
-        # self.production_sold = 0.0
+        self.elec_economy = 0.0
+        self.production_sold = 0.0
         self.elec_price_sell = 0.0
-        # self.elec_gain = 0.0
+        self.elec_gain = 0.0
+        self.total_gain = 0.0
         # self.prime = 0.0
         # self.certificat_vert_bxl = 0.0  # rebates from the brussels region
         # self.tarif_prosumer = 0.0

@@ -2,41 +2,61 @@
 <odoo>
   <template id="quote_template">
     <t t-call="web.html_container">
-      <t t-foreach="docs" t-as="installation">
-        <div class="page">
-          <h2>Solar panel installaion quote</h2>
-          <table>
-            <thead>
-              <tr>
-                <th>year</th>
-                <th>elec production</th>
-                <th>elec consumed</th>
-                <th>elec price buy</th>
-                <th>elec price sell</th>
-              </tr>
-            </thead>
-            <tbody>
-              <t t-set="yearly_data" t-value="installation.get_yearly_data()" />
-              <tr t-foreach="yearly_data" t-as="current_year">
-                <td>
-                  <t t-out="current_year.year" />
-                </td>
-                <td>
-                  <t t-out="current_year.production" t-options="{'widget': 'float', 'precision': 2}" />
-                </td>
-                <td>
-                  <t t-out="current_year.consumed" t-options="{'widget': 'float', 'precision': 2}" />
-                </td>
-                <td>
-                  <t t-out="current_year.elec_price_buy" t-options="{'widget': 'float', 'precision': 2}" />
-                </td>
-                <td>
-                  <t t-out="current_year.elec_price_sell" t-options="{'widget': 'float', 'precision': 2}" />
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+      <t t-call="web.external_layout">
+        <t t-foreach="docs" t-as="installation">
+          <div class="page">
+            <h2>Solar panel installaion quote</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>year</th>
+                  <th>Produced electricity (kWh)</th>
+                  <th>self-consumed electricity (kWh)</th>
+                  <th>Buying price of electricity &#8364;</th>
+                  <th>Savings in electricity &#8364;</th>
+                  <th>Selling price of electricity &#8364;</th>
+                  <th>Sold electricity revenue &#8364;</th>
+                  <th>Total revenue &#8364;</th>
+                </tr>
+              </thead>
+              <tbody>
+                <t t-set="yearly_data" t-value="installation.get_yearly_data()" />
+                <tr t-foreach="yearly_data" t-as="current_year">
+                  <td align="center">
+                    <t t-out="current_year.year" />
+                  </td>
+                  <td align="center">
+                    <t t-out="current_year.production"
+                      t-options="{'widget': 'float', 'precision': 2}" />
+                  </td>
+                  <td align="center">
+                    <t t-out="current_year.consumed" t-options="{'widget': 'float', 'precision': 2}" />
+                  </td>
+                  <td align="center">
+                    <t t-out="current_year.elec_price_buy"
+                      t-options="{'widget': 'float', 'precision': 2}" />
+                  </td>
+                  <td align="center">
+                    <t t-out="current_year.elec_economy"
+                      t-options="{'widget': 'float', 'precision': 2}" />
+                  </td>
+                  <td align="center">
+                    <t t-out="current_year.elec_price_sell"
+                      t-options="{'widget': 'float', 'precision': 2}" />
+                  </td>
+                  <td align="center">
+                    <t t-out="current_year.elec_gain"
+                      t-options="{'widget': 'float', 'precision': 2}" />
+                  </td>
+                  <td align="center">
+                    <t t-out="current_year.total_gain"
+                      t-options="{'widget': 'float', 'precision': 2}" />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </t>
       </t>
     </t>
   </template>

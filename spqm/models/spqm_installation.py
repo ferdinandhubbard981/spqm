@@ -90,6 +90,10 @@ class Installation(models.Model):
                 current_year.elec_price_sell = record.elec_price_sell_today_HT * (1 + record.elec_price_inflation / 100) ** years_installed * (1 + record.elecVAT / 100)
                 current_year.production = record.e_y_total * (1 - record.module_degradation_year / 100) ** years_installed
                 current_year.consumed = current_year.production * record.auto_consumption_rate / 100
+                current_year.elec_economy = current_year.consumed * current_year.elec_price_buy
+                current_year.production_sold = current_year.production - current_year.consumed
+                current_year.elec_gain = current_year.production_sold * current_year.elec_price_sell
+                current_year.total_gain = current_year.elec_economy + current_year.elec_gain
                 yearly_data.append(current_year)
 
             record.yearly_data = jsonpickle.dumps(yearly_data)
