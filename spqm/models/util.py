@@ -1,6 +1,3 @@
-import jsonpickle
-
-
 class MonthlyProduction():
     def __init__(self, E_m_values):
         # assumes that E_m_values is sorted in the order of the month each value belongs to (jan -> dec)
@@ -15,22 +12,11 @@ class MonthlyProduction():
                 E_m_values[i] += val
         return MonthlyProduction(E_m_values)
 
-    def to_bytes(self):
-        return jsonpickle.dumps(self)
-
-    def from_bytes(pickled_data):
-        return jsonpickle.loads(pickled_data)
-
-
-class YearlyDataList:
-    def __init__(self, yearly_data_list):
-        self.yearly_data_list = yearly_data_list
-
 
 class YearlyData:
     def __init__(self, year):
         self.year = year
-        # self.production = 0.0
+        self.production = 0.0
         # self.production_consumed = 0.0
         self.elec_price_buy = 0.0
         # self.elec_economy = 0.0
@@ -43,9 +29,3 @@ class YearlyData:
         # self.spending = 0.0
         # self.revenue = 0.0
         # self.revenue_cumulated = 0.0
-
-    def to_bytes(self):
-        return jsonpickle.dumps(self)
-
-    def from_bytes(pickled_data):
-        return jsonpickle.loads(pickled_data)

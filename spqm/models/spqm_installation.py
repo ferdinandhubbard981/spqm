@@ -1,5 +1,5 @@
 from odoo import models, fields, api
-from .util import MonthlyProduction, YearlyData, YearlyDataList
+from .util import MonthlyProduction, YearlyData
 import jsonpickle
 
 
@@ -11,9 +11,9 @@ class Installation(models.Model):
 
     # inputs
     # inverter_type = fields.Selection([("micro_inverter", "Micro Inverter"), ("inverter", "Inverter")], required=True, string="Inverter Type")
-    # zone_ids = fields.One2many("spqm.installation.zone", "installation_id", required=True)
-    # latitude = fields.Float()
-    # longitude = fields.Float()
+    zone_ids = fields.One2many("spqm.installation.zone", "installation_id", required=True)
+    latitude = fields.Float(required=True)
+    longitude = fields.Float(required=True)
     # region = fields.Selection([])
     start_year = fields.Integer(required=True)
     end_year = fields.Integer(required=True)
@@ -21,7 +21,7 @@ class Installation(models.Model):
     elec_price_sell_today_HT = fields.Float(required=True, help="The selling price of electricity in €/kWh excluding tax")
     elecVAT = fields.Float(required=True, help="the VAT of electricity as a %", default=6)
     elec_price_inflation = fields.Float(required=True, default=3)
-    # module_degradation_year = fields.Float(help="The degradation year-on-year of the solar panels as a % (of it's full capacity?)")
+    module_degradation_year = fields.Float(default=5, help="The degradation year-on-year of the solar panels as a % (of it's full capacity?)")
     # auto_consommation_rate = fields.Float(help="the percentage of the electricity produced that is used on site")
 
     # quote-relevant fields
@@ -32,7 +32,7 @@ class Installation(models.Model):
     # peak_power = fields.Float(readonly=True, compute="_compute_peak_power")
     # price_per_kw_cht = fields.Float(readonly=True)
     # E_m_average = fields.Float(readonly=True)
-    # E_y_total = fields.Float(readonly=True)
+    e_y_total = fields.Float(readonly=True)
     # short_year_list = fields.Float(readonly=True, help="list of years to be displayed in table")
     # production_total = fields.Float(readonly=True)
     # production_consumed_total = fields.Float(readonly=True)
@@ -68,9 +68,17 @@ class Installation(models.Model):
     #     for record in self:
     #         zone_monthly_productions = []
     #         for zone in record.zone_ids:
-    #             zone_monthly_productions.append(MonthlyProduction.from_bytes(zone.monthly_production))
+    #             zone_monthly_productions.append(jsonpickle.loads((zone.monthly_production)))
     #         monthly_production = MonthlyProduction.from_list_of_monthly_productions(zone_monthly_productions)
-    #         record.monthly_production = monthly_production.to_bytes()
+    #         record.monthly_production = jsonpickle.dumps(monthly_production)
+
+    def _compute_year_electricity_generated(self):
+        # computes the base electricity generated in a year, which is used with module degradation to compute it for the other years.
+        for record in self:
+            electricity_generated = 0
+            for zone in record.zone_ids:
+                electricity_generated += zone.e_y_total
+            record.e_y_total = electricity_generated
 
     def _compute_yearly_data(self):
         for record in self:
@@ -80,17 +88,17 @@ class Installation(models.Model):
                 current = YearlyData(year)
                 current.elec_price_buy = record.elec_price_buy_today_HT * (1 + record.elec_price_inflation / 100) ** years_installed * (1 + record.elecVAT / 100)
                 current.elec_price_sell = record.elec_price_sell_today_HT * (1 + record.elec_price_inflation / 100) ** years_installed * (1 + record.elecVAT / 100)
+                current.production = record.e_y_total * (1 - record.module_degradation_year / 100) ** years_installed
                 yearly_data.append(current)
 
-            yearly_data_obj = YearlyDataList(yearly_data)
-            yearly_data_pickled = jsonpickle.dumps(yearly_data_obj)
-            record.yearly_data = yearly_data_pickled
+            record.yearly_data = jsonpickle.dumps(yearly_data)
 
     def get_yearly_data(self):
-        yearly_data_obj = jsonpickle.loads(self.yearly_data)
-        print(f"yearly_Data length: {len(yearly_data_obj.yearly_data_list)}")
-        return yearly_data_obj.yearly_data_list
+        return jsonpickle.loads(self.yearly_data)
 
     def action_generate_quote(self):
+        for zone in self.zone_ids:
+            zone._compute_pvgis()
+        self._compute_year_electricity_generated()
         self._compute_yearly_data()
         return self.env.ref("spqm.action_report_spqm_installation").report_action(self)

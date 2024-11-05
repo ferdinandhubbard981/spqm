@@ -10,6 +10,7 @@
             <thead>
               <tr>
                 <th>year</th>
+                <th>elec production</th>
                 <th>elec price buy</th>
                 <th>elec price sell</th>
               </tr>
@@ -19,6 +20,9 @@
               <tr t-foreach="yearly_data" t-as="current">
                 <td>
                   <t t-out="current.year" />
+                </td>
+                <td>
+                  <t t-out="current.production" />
                 </td>
                 <td>
                   <t t-out="current.elec_price_buy" />

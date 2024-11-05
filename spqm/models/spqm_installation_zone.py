@@ -1,8 +1,9 @@
 from odoo import models, fields, api
 from odoo.exceptions import UserError
 import requests
-import json
 from .util import MonthlyProduction
+import jsonpickle
+
 
 class Zone(models.Model):
     _name = "spqm.installation.zone"
@@ -19,7 +20,6 @@ class Zone(models.Model):
 
     @api.depends('installation_id.latitude', 'installation_id.longitude', 'peak_power', 'loss', 'slope', 'azimuth')
     def _compute_pvgis(self):
-        # delete all monthly_production records linked ot this zone
         for record in self:
             if record.peak_power == 0:
                 continue
@@ -36,16 +36,11 @@ class Zone(models.Model):
             )
             response = requests.get(url=url, params=params)
             pvgis_data = response.json()
-            try:
-                if pvgis_data["status"] == 200:
-                    for i in range(len(pvgis_data['outputs']['monthly']['fixed'])):
-                        self.env['spqm.installation.monthly_production'].create()
-                        E_m_values.append(pvgis_data['outputs']['monthly']['fixed'][i]['E_m'])
-                    record.monthly_production = MonthlyProduction(E_m_values).to_bytes()
-                    record.e_m_average = pvgis_data['outputs']['totals']['fixed']['E_m']
-                else:
-                    raise UserError(f"Status code: {pvgis_data['status']}\nMessage: {pvgis_data['message']}")
-            except KeyError as e:
-                # print(f"pvgis json: \n\n{pvgis_data}\n\n")
-                raise KeyError(f"pvgis json: \n\n{pvgis_data}\n\n")
-            record.e_y_total = pvgis_data['outputs']['totals']['fixed']['E_y']
+            if "status" in pvgis_data:
+                raise UserError(f"Status code: {pvgis_data['status']}\nMessage: {pvgis_data['message']}")
+            else:
+                for i in range(len(pvgis_data['outputs']['monthly']['fixed'])):
+                    E_m_values.append(pvgis_data['outputs']['monthly']['fixed'][i]['E_m'])
+                record.monthly_production = jsonpickle.dumps(MonthlyProduction(E_m_values))
+                record.e_m_average = pvgis_data['outputs']['totals']['fixed']['E_m']
+                record.e_y_total = pvgis_data['outputs']['totals']['fixed']['E_y']

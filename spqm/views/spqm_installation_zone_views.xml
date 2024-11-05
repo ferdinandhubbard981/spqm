@@ -8,8 +8,6 @@
         <field name="loss" />
         <field name="slope" />
         <field name="azimuth" />
-        <field name="e_m_average" />
-        <field name="e_y_total" />
       </tree>
     </field>
   </record>
@@ -24,8 +22,6 @@
           <field name="loss" />
           <field name="slope" />
           <field name="azimuth" />
-          <field name="e_m_average" />
-          <field name="e_y_total" />
         </group>
       </form>
     </field>
