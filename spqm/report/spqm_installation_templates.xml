@@ -5,7 +5,26 @@
       <t t-call="web.external_layout">
         <t t-foreach="docs" t-as="installation">
           <div class="page">
-            <h2>Solar panel installaion quote</h2>
+            <h2>Solar panel installation quote</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>Month</th>
+                  <th>Electricity produced kWh</th>
+                </tr>
+              </thead>
+              <tbody>
+                <t t-set="monthly_production_list" t-value="installation.get_monthly_production_list()" />
+                <tr t-foreach="monthly_production_list" t-as="monthly_production">
+                  <td align="center">
+                    <t t-out="monthly_production.get_month_as_string()" />
+                  </td>
+                  <td align="center">
+                    <t t-out="monthly_production.electricity_produced" />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
             <table>
               <thead>
                 <tr>

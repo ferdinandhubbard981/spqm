@@ -14,7 +14,7 @@ class Zone(models.Model):
     slope = fields.Float()
     azimuth = fields.Float()
 
-    monthly_production = fields.Json(help="monthly electricity production data from solar panels used for plotting graph")
+    monthly_production_list = fields.Json(help="monthly electricity production data from solar panels used for plotting graph")
     e_m_average = fields.Float(readonly=True, help="average electricity generated per month")
     e_y_total = fields.Float(readonly=True, help="total electricity generated per year")
 
@@ -39,8 +39,10 @@ class Zone(models.Model):
             if "status" in pvgis_data:
                 raise UserError(f"Status code: {pvgis_data['status']}\nMessage: {pvgis_data['message']}")
             else:
+                monthly_production_list = []
                 for i in range(len(pvgis_data['outputs']['monthly']['fixed'])):
-                    E_m_values.append(pvgis_data['outputs']['monthly']['fixed'][i]['E_m'])
-                record.monthly_production = jsonpickle.dumps(MonthlyProduction(E_m_values))
+                    monthly_production = MonthlyProduction(i, pvgis_data['outputs']['monthly']['fixed'][i]['E_m'])
+                    monthly_production_list.append(monthly_production)
+                record.monthly_production_list = jsonpickle.dumps(monthly_production_list)
                 record.e_m_average = pvgis_data['outputs']['totals']['fixed']['E_m']
                 record.e_y_total = pvgis_data['outputs']['totals']['fixed']['E_y']
