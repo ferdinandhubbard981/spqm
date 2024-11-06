@@ -3,8 +3,8 @@
     <menuitem id="spqm_installations_menu" name="Installations">
       <menuitem id="spqm_installations_menu_action" action="spqm_installation_action" />
     </menuitem>
-    <!-- <menuitem id="estate_settings_menu" name="Settings"> -->
-    <!--   <menuitem id="estate_property_type_menu_action" action="estate_property_type_action" /> -->
-    <!-- </menuitem> -->
+    <menuitem id="spqm_products_menu" name="Products">
+      <menuitem id="spqm_solar_panels_menu_action" action="spqm_solar_panel_action" />
+  </menuitem>
   </menuitem>
 </odoo>

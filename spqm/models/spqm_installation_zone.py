@@ -9,7 +9,8 @@ class Zone(models.Model):
     _name = "spqm.installation.zone"
     _description = "The zones of an installation site. Some installation sites have multiple solar panel installation zones with distinct data"
     installation_id = fields.Many2one("spqm.installation", required=True, ondelete="cascade")
-    peak_power = fields.Float()
+    solar_panel_id = fields.Many2one("spqm.solar_panel")
+    solar_panel_quantity = fields.Integer()
     loss = fields.Float()
     slope = fields.Float()
     azimuth = fields.Float()
@@ -21,14 +22,11 @@ class Zone(models.Model):
     @api.depends('installation_id.latitude', 'installation_id.longitude', 'peak_power', 'loss', 'slope', 'azimuth')
     def _compute_pvgis(self):
         for record in self:
-            if record.peak_power == 0:
-                continue
-            E_m_values = []
             url = 'https://re.jrc.ec.europa.eu/api/v5_2/PVcalc'
             params = dict(
                 lat=record.installation_id.latitude,
                 lon=record.installation_id.longitude,
-                peakpower=record.peak_power,
+                peakpower=record.solar_panel_id.peak_power * record.solar_panel_quantity,
                 loss=record.loss,
                 angle=record.slope,
                 aspect=record.azimuth,

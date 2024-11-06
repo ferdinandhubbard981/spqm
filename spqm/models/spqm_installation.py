@@ -29,7 +29,6 @@ class Installation(models.Model):
     elec_price_sell_today = fields.Float(compute="_compute_elec_price_sell_today")
     monthly_production_list = fields.Json(help="the sum of the monthly production data of all zones, used to plot a graph of production/month")
     yearly_data = fields.Json(help="financial data regarding the installation for x years post-installation")
-    # peak_power = fields.Float(readonly=True, compute="_compute_peak_power")
     # price_per_kw_cht = fields.Float(readonly=True)
     e_m_average = fields.Float(readonly=True)
     e_y_total = fields.Float(readonly=True, help="The base electricity generated in a year, which is used with module degradation to compute it for the other years.")
@@ -45,13 +44,6 @@ class Installation(models.Model):
     # return_rate = fields.Float(readonly=True)
     # nbr_year_positive = fields.Float(readonly=True)
 
-    # @api.depends('zone_ids')
-    # def _compute_peak_power(self):
-    #     for record in self:
-    #         peak_power = 0
-    #         for zone in record.zone_ids:
-    #             peak_power += zone.peak_power
-    #         record.peak_power = peak_power
 
     @api.depends('elec_price_buy_today_HT', 'elecVAT')
     def _compute_elec_price_buy_today(self):
@@ -85,12 +77,6 @@ class Installation(models.Model):
             record.e_m_average = e_m_average_cumulated
             record.e_y_total = e_y_total_cumulated
 
-    def _compute_year_electricity_generated(self):
-        for record in self:
-            electricity_generated = 0
-            for zone in record.zone_ids:
-                electricity_generated += zone.e_y_total
-            record.e_y_total = electricity_generated
 
     def _compute_yearly_data(self):
         for record in self:
@@ -122,7 +108,6 @@ class Installation(models.Model):
     def action_generate_quote(self):
         for zone in self.zone_ids:
             zone._compute_pvgis()
-        self._compute_year_electricity_generated()
         self._compute_monthly_production()
         self._compute_yearly_data()
         return self.env.ref("spqm.action_report_spqm_installation").report_action(self)

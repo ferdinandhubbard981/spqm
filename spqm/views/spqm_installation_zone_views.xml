@@ -4,7 +4,8 @@
     <field name="model">spqm.installation.zone</field>
     <field name="arch" type="xml">
       <tree>
-        <field name="peak_power" />
+        <field name="solar_panel_id" />
+        <field name="solar_panel_quantity" />
         <field name="loss" />
         <field name="slope" />
         <field name="azimuth" />
@@ -18,7 +19,8 @@
     <field name="arch" type="xml">
       <form>
         <group>
-          <field name="peak_power" />
+          <field name="solar_panel_id" />
+          <field name="solar_panel_quantity" />
           <field name="loss" />
           <field name="slope" />
           <field name="azimuth" />
