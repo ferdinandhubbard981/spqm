@@ -11,13 +11,11 @@ class Zone(models.Model):
     installation_id = fields.Many2one("spqm.installation", required=True, ondelete="cascade")
     solar_panel_id = fields.Many2one("spqm.solar_panel")
     solar_panel_quantity = fields.Integer()
-    loss = fields.Float()
     slope = fields.Float()
     azimuth = fields.Float()
 
     monthly_production_list = fields.Json(help="monthly electricity production data from solar panels used for plotting graph")
-    e_m_average = fields.Float(readonly=True, help="average electricity generated per month")
-    e_y_total = fields.Float(readonly=True, help="total electricity generated per year")
+    e_y_total = fields.Float(readonly=True, help="total electricity generated per year, as reported by pvgis (not including module degradation)")
 
     @api.depends('installation_id.latitude', 'installation_id.longitude', 'peak_power', 'loss', 'slope', 'azimuth')
     def _compute_pvgis(self):
@@ -27,7 +25,7 @@ class Zone(models.Model):
                 lat=record.installation_id.latitude,
                 lon=record.installation_id.longitude,
                 peakpower=record.solar_panel_id.peak_power * record.solar_panel_quantity,
-                loss=record.loss,
+                loss=record.solar_panel_id.loss,
                 angle=record.slope,
                 aspect=record.azimuth,
                 outputformat='json'
@@ -42,5 +40,4 @@ class Zone(models.Model):
                     monthly_production = MonthlyProduction(i, pvgis_data['outputs']['monthly']['fixed'][i]['E_m'])
                     monthly_production_list.append(monthly_production)
                 record.monthly_production_list = jsonpickle.dumps(monthly_production_list)
-                record.e_m_average = pvgis_data['outputs']['totals']['fixed']['E_m']
                 record.e_y_total = pvgis_data['outputs']['totals']['fixed']['E_y']

@@ -33,7 +33,6 @@
             <field name="elec_price_sell_today_HT" />
             <field name="elecVAT" />
             <field name="elec_price_inflation" />
-            <field name="module_degradation_year" />
             <field name="longitude" />
             <field name="latitude" />
             <field name="auto_consumption_rate"/>

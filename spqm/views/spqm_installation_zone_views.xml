@@ -6,7 +6,6 @@
       <tree>
         <field name="solar_panel_id" />
         <field name="solar_panel_quantity" />
-        <field name="loss" />
         <field name="slope" />
         <field name="azimuth" />
       </tree>
@@ -21,7 +20,6 @@
         <group>
           <field name="solar_panel_id" />
           <field name="solar_panel_quantity" />
-          <field name="loss" />
           <field name="slope" />
           <field name="azimuth" />
         </group>

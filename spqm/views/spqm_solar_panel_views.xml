@@ -13,6 +13,9 @@
         <field name="name" />
         <field name="price" />
         <field name="peak_power" />
+        <field name="loss" />
+        <field name="module_degradation_in_first_year" />
+        <field name="module_degradation_for_subsequent_years" />
       </tree>
     </field>
   </record>
@@ -23,9 +26,12 @@
     <field name="arch" type="xml">
       <form>
         <group>
-            <field name="name" />
-            <field name="price" />
-            <field name="peak_power" />
+          <field name="name" />
+          <field name="price" />
+          <field name="peak_power" />
+          <field name="loss" />
+          <field name="module_degradation_in_first_year" />
+          <field name="module_degradation_for_subsequent_years" />
         </group>
       </form>
     </field>
