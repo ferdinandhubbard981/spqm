@@ -56,8 +56,9 @@ class MonthlyProduction:
 
 
 class YearlyData:
-    def __init__(self, year):
+    def __init__(self, year, start_year):
         self.year = year
+        self.years_since_installation = year - start_year
         self.production = 0.0
         self.consumed = 0.0
         self.elec_price_buy = 0.0
@@ -65,6 +66,7 @@ class YearlyData:
         self.production_sold = 0.0
         self.elec_price_sell = 0.0
         self.elec_gain = 0.0
+        self.expenses = 0.0
         self.total_gain = 0.0
         self.cumulated_total = 0.0
         # self.prime = 0.0

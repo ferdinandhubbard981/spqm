@@ -62,6 +62,48 @@
 
             <h3>Expected returns</h3>
             <table>
+              <tr>
+                <th>Investment</th>
+                <th>Return on investment</th>
+              </tr>
+              <tr>
+                <td align="center">
+                  <t t-out="installation.total_investment"
+                    t-options="{'widget': 'float', 'precision': 2}" />
+                </td>
+                <td align="center">
+                  <t t-out="installation.return_on_investment"
+                    t-options="{'widget': 'float', 'precision': 2}" />
+                </td>
+              </tr>
+            </table>
+            <h5>Hypotheses</h5>
+            <table>
+              <tr>
+                <td>Current buying price of electricity (not including tax)</td>
+                <td>
+                  <t t-out="installation.elec_price_buy_today_HT" />
+                </td>
+              </tr>
+              <td>Current selling price of electricity (not including tax)</td>
+              <td>
+                <t t-out="installation.elec_price_sell_today_HT" />
+              </td>
+              <tr>
+              </tr>
+              <td>Yearly inflation of the cost of electricity</td>
+              <td>
+                <t t-out="installation.elec_price_inflation" />
+              </td>
+              <tr>
+              </tr>
+              <td>Self-consumed electricity</td>
+              <td>
+                <t t-out="installation.auto_consumption_rate" />
+              </td>
+            </table>
+
+            <table>
               <thead>
                 <tr>
                   <th>year</th>
@@ -71,6 +113,7 @@
                   <th>Savings in electricity &#8364;</th>
                   <th>Selling price of electricity &#8364;/kWh</th>
                   <th>Sold electricity revenue &#8364;</th>
+                  <th>Expenses &#8364;</th>
                   <th>Total revenue &#8364;</th>
                   <th>Cumulated revenue &#8364;</th>
                 </tr>
@@ -102,6 +145,10 @@
                   </td>
                   <td align="center">
                     <t t-out="current_year.elec_gain"
+                      t-options="{'widget': 'float', 'precision': 2}" />
+                  </td>
+                  <td align="center">
+                    <t t-out="current_year.expenses"
                       t-options="{'widget': 'float', 'precision': 2}" />
                   </td>
                   <td align="center">
