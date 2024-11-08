@@ -5,7 +5,39 @@
       <t t-call="web.external_layout">
         <t t-foreach="docs" t-as="installation">
           <div class="page">
-            <h2>Solar panel installation quote</h2>
+            <h1>Solar panel installation quote</h1>
+
+            <h3>Costs</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>product</th>
+                  <th>price</th>
+                  <th>quantity</th>
+                  <th>total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr t-foreach="installation.get_product_entries()" t-as="product_entry">
+                  <td align="center">
+                    <t t-out="product_entry.product.name" />
+                  </td>
+                  <td align="center">
+                    <t t-out="product_entry.product.price"
+                      t-options="{'widget': 'float', 'precision': 2}" />
+                  </td>
+                  <td align="center">
+                    <t t-out="product_entry.quantity" />
+                  </td>
+                  <td align="center">
+                    <t t-out="product_entry.total"
+                      t-options="{'widget': 'float', 'precision': 2}" />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <h3>Monthly variance in electricity production</h3>
             <table>
               <thead>
                 <tr>
@@ -27,6 +59,8 @@
                 </tr>
               </tbody>
             </table>
+
+            <h3>Expected returns</h3>
             <table>
               <thead>
                 <tr>
@@ -81,6 +115,7 @@
                 </tr>
               </tbody>
             </table>
+
           </div>
         </t>
       </t>

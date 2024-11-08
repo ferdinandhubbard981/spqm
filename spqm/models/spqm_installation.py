@@ -1,5 +1,5 @@
 from odoo import models, fields, api
-from .util import MonthlyProduction, YearlyData
+from .util import MonthlyProduction, YearlyData, Product, ProductEntry
 import jsonpickle
 
 
@@ -11,6 +11,7 @@ class Installation(models.Model):
 
     # inputs
     # inverter_type = fields.Selection([("micro_inverter", "Micro Inverter"), ("inverter", "Inverter")], required=True, string="Inverter Type")
+    product_entries = fields.Json(help="the products that are in the quote. These are aggregated from various other fields on the Installation model")
     zone_ids = fields.One2many("spqm.installation.zone", "installation_id", required=True)
     latitude = fields.Float(required=True)
     longitude = fields.Float(required=True)
@@ -44,7 +45,6 @@ class Installation(models.Model):
     # return_rate = fields.Float(readonly=True)
     # nbr_year_positive = fields.Float(readonly=True)
 
-
     @api.depends('elec_price_buy_today_HT', 'elecVAT')
     def _compute_elec_price_buy_today(self):
         for record in self:
@@ -77,6 +77,14 @@ class Installation(models.Model):
             record.e_m_average = e_m_average_cumulated
             record.e_y_total = e_y_total_cumulated
 
+    def _compute_products(self):
+        for record in self:
+            product_entries = []
+            for zone in record.zone_ids:
+                product = Product(zone.solar_panel_id.name, zone.solar_panel_id.price)
+                product_entry = ProductEntry(product, zone.solar_panel_quantity)
+                product_entries.append(product_entry)
+            record.product_entries = jsonpickle.dumps(product_entries)
 
     def _compute_yearly_data(self):
         for record in self:
@@ -105,9 +113,13 @@ class Installation(models.Model):
     def get_monthly_production_list(self):
         return jsonpickle.loads(self.monthly_production_list)
 
+    def get_product_entries(self):
+        return jsonpickle.loads(self.product_entries)
+
     def action_generate_quote(self):
         for zone in self.zone_ids:
             zone._compute_pvgis()
         self._compute_monthly_production()
+        self._compute_products()
         self._compute_yearly_data()
         return self.env.ref("spqm.action_report_spqm_installation").report_action(self)
