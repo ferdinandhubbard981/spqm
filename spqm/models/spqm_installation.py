@@ -11,6 +11,8 @@ class Installation(models.Model):
 
     # inputs
     # inverter_type = fields.Selection([("micro_inverter", "Micro Inverter"), ("inverter", "Inverter")], required=True, string="Inverter Type")
+    selected_years = fields.Json(default=lambda self: jsonpickle.dumps([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 14, 19, 24]))
+    computed_year_count = fields.Integer(default=25)
     name = fields.Char(required=True)
     client_id = fields.Many2one("res.partner", string="Client")
     worksite_address = fields.Char(readonly=False)
@@ -19,7 +21,6 @@ class Installation(models.Model):
     latitude = fields.Float(required=True)
     longitude = fields.Float(required=True)
     start_year = fields.Integer(required=True)
-    end_year = fields.Integer(required=True)
     elec_price_buy_today_HT = fields.Float(required=True, help="The buying price of electricity in €/kWh excluding tax")
     elec_price_sell_today_HT = fields.Float(required=True, help="The selling price of electricity in €/kWh excluding tax")
     elecVAT = fields.Float(required=True, help="the VAT of electricity as a %", default=6)
@@ -125,7 +126,7 @@ class Installation(models.Model):
         for record in self:
             yearly_data = []
             cumulated_total = 0
-            for year in range(record.start_year, record.end_year):
+            for year in range(record.start_year, record.start_year + record.computed_year_count):
                 years_installed = year - record.start_year
 
                 current_year = YearlyData(year, record.start_year)
@@ -152,6 +153,9 @@ class Installation(models.Model):
                 yearly_data.append(current_year)
 
             record.yearly_data = jsonpickle.dumps(yearly_data)
+
+    def get_selected_years(self):
+        return jsonpickle.loads(self.selected_years)
 
     def get_yearly_data(self):
         return jsonpickle.loads(self.yearly_data)

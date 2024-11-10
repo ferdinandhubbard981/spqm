@@ -28,7 +28,6 @@
           <group>
             <field name="name" />
             <field name="start_year" />
-            <field name="end_year" />
             <field name="elec_price_buy_today_HT" />
             <field name="elec_price_sell_today_HT" />
             <field name="elecVAT" />

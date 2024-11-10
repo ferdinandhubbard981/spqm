@@ -172,43 +172,44 @@
               </thead>
               <tbody>
                 <t t-set="yearly_data" t-value="installation.get_yearly_data()" />
-                <tr t-foreach="yearly_data" t-as="current_year">
+                <t t-set="selected_years" t-value="installation.get_selected_years()" />
+                <tr t-foreach="selected_years" t-as="i">
                   <td align="center">
-                    <t t-out="current_year.year" />
+                    <t t-out="yearly_data[i].years_since_installation+1" />
                   </td>
                   <td align="center">
-                    <t t-out="current_year.production"
+                    <t t-out="yearly_data[i].production"
                       t-options="{'widget': 'float', 'precision': 2}" />
                   </td>
                   <td align="center">
-                    <t t-out="current_year.consumed" t-options="{'widget': 'float', 'precision': 2}" />
+                    <t t-out="yearly_data[i].consumed" t-options="{'widget': 'float', 'precision': 2}" />
                   </td>
                   <td align="center">
-                    <t t-out="current_year.elec_price_buy"
+                    <t t-out="yearly_data[i].elec_price_buy"
                       t-options="{'widget': 'monetary', 'display_currency': installation.currency_id}" />
                   </td>
                   <td align="center">
-                    <t t-out="current_year.elec_economy"
+                    <t t-out="yearly_data[i].elec_economy"
                       t-options="{'widget': 'monetary', 'display_currency': installation.currency_id}" />
                   </td>
                   <td align="center">
-                    <t t-out="current_year.elec_price_sell"
+                    <t t-out="yearly_data[i].elec_price_sell"
                       t-options="{'widget': 'monetary', 'display_currency': installation.currency_id}" />
                   </td>
                   <td align="center">
-                    <t t-out="current_year.elec_gain"
+                    <t t-out="yearly_data[i].elec_gain"
                       t-options="{'widget': 'monetary', 'display_currency': installation.currency_id}" />
                   </td>
                   <td align="center">
-                    <t t-out="current_year.expenses"
+                    <t t-out="yearly_data[i].expenses"
                       t-options="{'widget': 'monetary', 'display_currency': installation.currency_id}" />
                   </td>
                   <td align="center">
-                    <t t-out="current_year.total_gain"
+                    <t t-out="yearly_data[i].total_gain"
                       t-options="{'widget': 'monetary', 'display_currency': installation.currency_id}" />
                   </td>
                   <td align="center">
-                    <t t-out="current_year.cumulated_total"
+                    <t t-out="yearly_data[i].cumulated_total"
                       t-options="{'widget': 'monetary', 'display_currency': installation.currency_id}" />
                   </td>
                 </tr>
