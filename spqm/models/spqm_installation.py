@@ -7,7 +7,9 @@ class Installation(models.Model):
     _name = "spqm.installation"
     _description = "Represents all the data from a solar panel installation site to generate a quote"
     name = fields.Char(required=True)
-    # client = fields.Many2one("res.partner", string="Client")
+    client_id = fields.Many2one("res.partner", string="Client")
+    worksite_address = fields.Char(readonly=False)
+    billing_address = fields.Char(readonly=False)
 
     # inputs
     # inverter_type = fields.Selection([("micro_inverter", "Micro Inverter"), ("inverter", "Inverter")], required=True, string="Inverter Type")
@@ -21,6 +23,7 @@ class Installation(models.Model):
     elecVAT = fields.Float(required=True, help="the VAT of electricity as a %", default=6)
     elec_price_inflation = fields.Float(required=True, default=3)
     auto_consumption_rate = fields.Float(help="the percentage of the electricity produced that is used on site")
+    offer_validity = fields.Date(help="date after which the offer will be invalid")
 
     # quote-relevant fields
     peak_power = fields.Float(help="The cumulated peak power of all the zones, in kW")
@@ -39,6 +42,12 @@ class Installation(models.Model):
     # elec_economy_total = fields.Float(readonly=True)
     # elec_gain_total = fields.Float(readonly=True)
     # spending_total = fields.Float(readonly=True)
+
+    @api.onchange('client_id')
+    def _onchange_address(self):
+        for record in self:
+            record.worksite_address = record.client_id.contact_address
+            record.billing_address = record.client_id.contact_address
 
     @api.depends('elec_price_buy_today_HT', 'elecVAT')
     def _compute_elec_price_buy_today(self):
