@@ -6,13 +6,15 @@ import jsonpickle
 class Installation(models.Model):
     _name = "spqm.installation"
     _description = "Represents all the data from a solar panel installation site to generate a quote"
+
+    currency_id = fields.Many2one('res.currency', string="Currency", default=lambda self: self.env.company.currency_id)
+
+    # inputs
+    # inverter_type = fields.Selection([("micro_inverter", "Micro Inverter"), ("inverter", "Inverter")], required=True, string="Inverter Type")
     name = fields.Char(required=True)
     client_id = fields.Many2one("res.partner", string="Client")
     worksite_address = fields.Char(readonly=False)
     billing_address = fields.Char(readonly=False)
-
-    # inputs
-    # inverter_type = fields.Selection([("micro_inverter", "Micro Inverter"), ("inverter", "Inverter")], required=True, string="Inverter Type")
     zone_ids = fields.One2many("spqm.installation.zone", "installation_id", required=True)
     latitude = fields.Float(required=True)
     longitude = fields.Float(required=True)

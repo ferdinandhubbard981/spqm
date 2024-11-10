@@ -14,7 +14,7 @@
                 <td>Investment</td>
                 <td align="center">
                   <t t-out="installation.total_investment"
-                    t-options="{'widget': 'float', 'precision': 2}" />
+                    t-options="{'widget': 'monetary', 'display_currency': installation.currency_id}" />
                 </td>
               </tr>
               <tr>
@@ -28,7 +28,7 @@
                 <td>Cost per Watt (excluding VAT)</td>
                 <td align="center">
                   <t t-out="installation.cost_per_watt"
-                    t-options="{'widget': 'float', 'precision': 2}" />
+                    t-options="{'widget': 'monetary', 'display_currency': installation.currency_id}" />
                 </td>
               </tr>
             </table>
@@ -97,14 +97,14 @@
                   </td>
                   <td align="center">
                     <t t-out="product_entry.product.price"
-                      t-options="{'widget': 'float', 'precision': 2}" />
+                      t-options="{'widget': 'monetary', 'display_currency': installation.currency_id}" />
                   </td>
                   <td align="center">
                     <t t-out="product_entry.quantity" />
                   </td>
                   <td align="center">
                     <t t-out="product_entry.total"
-                      t-options="{'widget': 'float', 'precision': 2}" />
+                      t-options="{'widget': 'monetary', 'display_currency': installation.currency_id}" />
                   </td>
                 </tr>
               </tbody>
@@ -121,7 +121,7 @@
               <tr>
                 <td align="center">
                   <t t-out="installation.total_investment"
-                    t-options="{'widget': 'float', 'precision': 2}" />
+                    t-options="{'widget': 'monetary', 'display_currency': installation.currency_id}" />
                 </td>
                 <td align="center">
                   <t t-out="installation.return_on_investment"
@@ -185,31 +185,31 @@
                   </td>
                   <td align="center">
                     <t t-out="current_year.elec_price_buy"
-                      t-options="{'widget': 'float', 'precision': 2}" />
+                      t-options="{'widget': 'monetary', 'display_currency': installation.currency_id}" />
                   </td>
                   <td align="center">
                     <t t-out="current_year.elec_economy"
-                      t-options="{'widget': 'float', 'precision': 2}" />
+                      t-options="{'widget': 'monetary', 'display_currency': installation.currency_id}" />
                   </td>
                   <td align="center">
                     <t t-out="current_year.elec_price_sell"
-                      t-options="{'widget': 'float', 'precision': 2}" />
+                      t-options="{'widget': 'monetary', 'display_currency': installation.currency_id}" />
                   </td>
                   <td align="center">
                     <t t-out="current_year.elec_gain"
-                      t-options="{'widget': 'float', 'precision': 2}" />
+                      t-options="{'widget': 'monetary', 'display_currency': installation.currency_id}" />
                   </td>
                   <td align="center">
                     <t t-out="current_year.expenses"
-                      t-options="{'widget': 'float', 'precision': 2}" />
+                      t-options="{'widget': 'monetary', 'display_currency': installation.currency_id}" />
                   </td>
                   <td align="center">
                     <t t-out="current_year.total_gain"
-                      t-options="{'widget': 'float', 'precision': 2}" />
+                      t-options="{'widget': 'monetary', 'display_currency': installation.currency_id}" />
                   </td>
                   <td align="center">
                     <t t-out="current_year.cumulated_total"
-                      t-options="{'widget': 'float', 'precision': 2}" />
+                      t-options="{'widget': 'monetary', 'display_currency': installation.currency_id}" />
                   </td>
                 </tr>
               </tbody>

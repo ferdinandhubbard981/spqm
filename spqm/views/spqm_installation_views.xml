@@ -11,7 +11,7 @@
     <field name="arch" type="xml">
       <tree>
         <field name="name" />
-        <field name="start_year" />
+        <field name="client_id" />
       </tree>
     </field>
   </record>
@@ -35,12 +35,12 @@
             <field name="elec_price_inflation" />
             <field name="longitude" />
             <field name="latitude" />
-            <field name="auto_consumption_rate"/>
+            <field name="auto_consumption_rate" />
             <field name="zone_ids" />
             <field name="client_id" />
-            <field name="worksite_address"/>
-            <field name="billing_address"/>
-            <field name="offer_validity"/>
+            <field name="worksite_address" />
+            <field name="billing_address" />
+            <field name="offer_validity" />
             <!-- <field name=""/> -->
           </group>
         </sheet>
