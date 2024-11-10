@@ -14,7 +14,6 @@ class Installation(models.Model):
     zone_ids = fields.One2many("spqm.installation.zone", "installation_id", required=True)
     latitude = fields.Float(required=True)
     longitude = fields.Float(required=True)
-    # region = fields.Selection([])
     start_year = fields.Integer(required=True)
     end_year = fields.Integer(required=True)
     elec_price_buy_today_HT = fields.Float(required=True, help="The buying price of electricity in €/kWh excluding tax")
@@ -24,6 +23,8 @@ class Installation(models.Model):
     auto_consumption_rate = fields.Float(help="the percentage of the electricity produced that is used on site")
 
     # quote-relevant fields
+    peak_power = fields.Float(help="The cumulated peak power of all the zones, in kW")
+    cost_per_watt = fields.Float(help="the client cost per watt of peak power from the solar panels")
     total_investment = fields.Float(help="represents the total investment that the client would make into the installation")
     return_on_investment = fields.Float(help="client's ROI in years")
     product_entries = fields.Json(help="the products that are in the quote. These are aggregated from various other fields on the Installation model")
@@ -31,18 +32,13 @@ class Installation(models.Model):
     elec_price_sell_today = fields.Float(compute="_compute_elec_price_sell_today")
     monthly_production_list = fields.Json(help="the sum of the monthly production data of all zones, used to plot a graph of production/month")
     yearly_data = fields.Json(help="financial data regarding the installation for x years post-installation")
-    # price_per_kw_cht = fields.Float(readonly=True)
     # short_year_list = fields.Float(readonly=True, help="list of years to be displayed in table")
     # production_total = fields.Float(readonly=True)
     # production_consumed_total = fields.Float(readonly=True)
     # production_sold_total = fields.Float(readonly=True)
     # elec_economy_total = fields.Float(readonly=True)
     # elec_gain_total = fields.Float(readonly=True)
-    # prime_total = fields.Float(readonly=True)
-    # tarif_prosumer_total = fields.Float(readonly=True)
     # spending_total = fields.Float(readonly=True)
-    # return_rate = fields.Float(readonly=True)
-    # nbr_year_positive = fields.Float(readonly=True)
 
     @api.depends('elec_price_buy_today_HT', 'elecVAT')
     def _compute_elec_price_buy_today(self):
@@ -103,6 +99,17 @@ class Installation(models.Model):
                 return_on_investment = year.years_since_installation + decimals
                 record.return_on_investment = return_on_investment
 
+    def _compute_peak_power(self):
+        for record in self:
+            peak_power = 0
+            for zone in record.zone_ids:
+                peak_power += zone.solar_panel_id.peak_power * zone.solar_panel_quantity
+            record.peak_power = peak_power
+
+    def _compute_cost_per_watt(self):
+        for record in self:
+            record.cost_per_watt = record.total_investment / (record.peak_power * 1000)
+
     def _compute_yearly_data(self):
         for record in self:
             yearly_data = []
@@ -152,4 +159,6 @@ class Installation(models.Model):
         self._compute_total_investment()
         self._compute_yearly_data()
         self._compute_ROI()
+        self._compute_peak_power()
+        self._compute_cost_per_watt()
         return self.env.ref("spqm.action_report_spqm_installation").report_action(self)

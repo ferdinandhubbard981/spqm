@@ -5,10 +5,57 @@
       <t t-call="web.external_layout">
         <t t-foreach="docs" t-as="installation">
           <div class="page">
-            <h1>Solar panel installation quote</h1>
+            <h1 class="text-center">Solar panel installation quote</h1>
+
+            <h3>Summary</h3>
+            <h5>Financial</h5>
+            <table class="table">
+              <tr>
+                <td>Investment</td>
+                <td align="center">
+                  <t t-out="installation.total_investment"
+                    t-options="{'widget': 'float', 'precision': 2}" />
+                </td>
+              </tr>
+              <tr>
+                <td>Return on investment</td>
+                <td align="center">
+                  <t t-out="installation.return_on_investment"
+                    t-options="{'widget': 'float', 'precision': 2}" />
+                </td>
+              </tr>
+              <tr>
+                <td>Cost per Watt (excluding VAT)</td>
+                <td align="center">
+                  <t t-out="installation.cost_per_watt"
+                    t-options="{'widget': 'float', 'precision': 2}" />
+                </td>
+              </tr>
+            </table>
+            <h5>Technical</h5>
+            <table class="table">
+              <tr>
+                <td>Total installed power</td>
+                <td align="center">
+                  <t t-out="installation.peak_power"
+                    t-options="{'widget': 'float', 'precision': 2}" />
+                </td>
+              </tr>
+              <tr>
+                <td>Estimated production in first year</td>
+                <td align="center">
+                  <t t-out="installation.get_yearly_data()[0].production"
+                    t-options="{'widget': 'float', 'precision': 2}" />
+                </td>
+              </tr>
+
+            </table>
+            <h5>References</h5>
+
+            <p style="page-break-before:always;"> </p>
 
             <h3>Costs</h3>
-            <table>
+            <table class="table">
               <thead>
                 <tr>
                   <th>product</th>
@@ -37,31 +84,10 @@
               </tbody>
             </table>
 
-            <h3>Monthly variance in electricity production</h3>
-            <table>
-              <thead>
-                <tr>
-                  <th>Month</th>
-                  <th>Electricity produced kWh</th>
-                </tr>
-              </thead>
-              <tbody>
-                <t t-set="monthly_production_list"
-                  t-value="installation.get_monthly_production_list()" />
-                <tr t-foreach="monthly_production_list" t-as="monthly_production">
-                  <td align="center">
-                    <t t-out="monthly_production.get_month_as_string()" />
-                  </td>
-                  <td align="center">
-                    <t t-out="monthly_production.electricity_produced"
-                      t-options="{'widget': 'float', 'precision': 2}" />
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+            <p style="page-break-before:always;"> </p>
 
             <h3>Expected returns</h3>
-            <table>
+            <table class="table">
               <tr>
                 <th>Investment</th>
                 <th>Return on investment</th>
@@ -78,7 +104,7 @@
               </tr>
             </table>
             <h5>Hypotheses</h5>
-            <table>
+            <table class="table">
               <tr>
                 <td>Current buying price of electricity (not including tax)</td>
                 <td>
@@ -103,7 +129,7 @@
               </td>
             </table>
 
-            <table>
+            <table class="table">
               <thead>
                 <tr>
                   <th>year</th>
@@ -157,6 +183,31 @@
                   </td>
                   <td align="center">
                     <t t-out="current_year.cumulated_total"
+                      t-options="{'widget': 'float', 'precision': 2}" />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <p style="page-break-before:always;"> </p>
+
+            <h3>Monthly variance in electricity production</h3>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Month</th>
+                  <th>Electricity produced kWh</th>
+                </tr>
+              </thead>
+              <tbody>
+                <t t-set="monthly_production_list"
+                  t-value="installation.get_monthly_production_list()" />
+                <tr t-foreach="monthly_production_list" t-as="monthly_production">
+                  <td align="center">
+                    <t t-out="monthly_production.get_month_as_string()" />
+                  </td>
+                  <td align="center">
+                    <t t-out="monthly_production.electricity_produced"
                       t-options="{'widget': 'float', 'precision': 2}" />
                   </td>
                 </tr>
