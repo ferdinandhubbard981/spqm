@@ -38,6 +38,7 @@ class Installation(models.Model):
     elec_price_sell_today = fields.Float(compute="_compute_elec_price_sell_today")
     monthly_production_list = fields.Json(help="the sum of the monthly production data of all zones, used to plot a graph of production/month")
     yearly_data = fields.Json(help="financial data regarding the installation for x years post-installation")
+    cumulated_yearly_data = fields.Json(help="totals of yearly_data")
     # short_year_list = fields.Float(readonly=True, help="list of years to be displayed in table")
     # production_total = fields.Float(readonly=True)
     # production_consumed_total = fields.Float(readonly=True)
@@ -154,11 +155,29 @@ class Installation(models.Model):
 
             record.yearly_data = jsonpickle.dumps(yearly_data)
 
+    def _compute_cumulated_yearly_data(self):
+        for record in self:
+            cumulated_yearly_data = YearlyData(-1, 0)
+            yearly_data = record.get_yearly_data()
+            for data in yearly_data:
+                cumulated_yearly_data.production += data.production
+                cumulated_yearly_data.consumed += data.consumed
+                cumulated_yearly_data.elec_economy += data.elec_economy
+                cumulated_yearly_data.production_sold += data.production_sold
+                cumulated_yearly_data.elec_gain += data.elec_gain
+                cumulated_yearly_data.expenses += data.expenses
+                cumulated_yearly_data.total_gain += data.total_gain
+            cumulated_yearly_data.cumulated_total = yearly_data[len(yearly_data) - 1].cumulated_total
+            record.cumulated_yearly_data = jsonpickle.dumps(cumulated_yearly_data)
+
     def get_selected_years(self):
         return jsonpickle.loads(self.selected_years)
 
     def get_yearly_data(self):
         return jsonpickle.loads(self.yearly_data)
+
+    def get_cumulated_yearly_data(self):
+        return jsonpickle.loads(self.cumulated_yearly_data)
 
     def get_monthly_production_list(self):
         return jsonpickle.loads(self.monthly_production_list)
@@ -173,6 +192,7 @@ class Installation(models.Model):
         self._compute_products()
         self._compute_total_investment()
         self._compute_yearly_data()
+        self._compute_cumulated_yearly_data()
         self._compute_ROI()
         self._compute_peak_power()
         self._compute_cost_per_watt()

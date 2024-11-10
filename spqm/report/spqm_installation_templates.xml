@@ -13,22 +13,24 @@
               <tr>
                 <td>Investment</td>
                 <td align="center">
-                  <t t-out="installation.total_investment"
-                    t-options="{'widget': 'monetary', 'display_currency': installation.currency_id}" />
+                  <p><t t-out="installation.total_investment"
+                      t-options="{'widget': 'float', 'precision': 2}" /> €</p>
                 </td>
               </tr>
               <tr>
                 <td>Return on investment</td>
                 <td align="center">
-                  <t t-out="installation.return_on_investment"
-                    t-options="{'widget': 'float', 'precision': 2}" />
+                  <p>
+                    <t t-out="installation.return_on_investment"
+                      t-options="{'widget': 'float', 'precision': 2}" /> Years </p>
                 </td>
               </tr>
               <tr>
                 <td>Cost per Watt (excluding VAT)</td>
                 <td align="center">
-                  <t t-out="installation.cost_per_watt"
-                    t-options="{'widget': 'monetary', 'display_currency': installation.currency_id}" />
+                  <p>
+                    <t t-out="installation.cost_per_watt"
+                      t-options="{'widget': 'float', 'precision': 2}" /> €</p>
                 </td>
               </tr>
             </table>
@@ -37,15 +39,17 @@
               <tr>
                 <td>Total installed power</td>
                 <td align="center">
-                  <t t-out="installation.peak_power"
-                    t-options="{'widget': 'float', 'precision': 2}" />
+                  <p>
+                    <t t-out="installation.peak_power"
+                      t-options="{'widget': 'float', 'precision': 2}" /> kW </p>
                 </td>
               </tr>
               <tr>
                 <td>Estimated production in first year</td>
                 <td align="center">
-                  <t t-out="installation.get_yearly_data()[0].production"
-                    t-options="{'widget': 'float', 'precision': 2}" />
+                  <p>
+                    <t t-out="installation.get_yearly_data()[0].production"
+                      t-options="{'widget': 'float', 'precision': 2}" /> kWh </p>
                 </td>
               </tr>
 
@@ -55,25 +59,25 @@
               <tr>
                 <td>Name</td>
                 <td>
-                  <t t-out="installation.client_id.name"/>
+                  <t t-out="installation.client_id.name" />
                 </td>
               </tr>
               <tr>
                 <td>Worksite address</td>
                 <td>
-                  <t t-out="installation.worksite_address"/>
+                  <t t-out="installation.worksite_address" />
                 </td>
               </tr>
               <tr>
                 <td>Billing address</td>
                 <td>
-                  <t t-out="installation.billing_address"/>
+                  <t t-out="installation.billing_address" />
                 </td>
               </tr>
               <tr>
                 <td>Offer valid until</td>
                 <td>
-                  <t t-out="installation.offer_validity"/>
+                  <t t-out="installation.offer_validity" />
                 </td>
               </tr>
             </table>
@@ -96,15 +100,17 @@
                     <t t-out="product_entry.product.name" />
                   </td>
                   <td align="center">
-                    <t t-out="product_entry.product.price"
-                      t-options="{'widget': 'monetary', 'display_currency': installation.currency_id}" />
+                    <p>
+                      <t t-out="product_entry.product.price"
+                        t-options="{'widget': 'float', 'precision': 2}" /> €</p>
                   </td>
                   <td align="center">
                     <t t-out="product_entry.quantity" />
                   </td>
                   <td align="center">
-                    <t t-out="product_entry.total"
-                      t-options="{'widget': 'monetary', 'display_currency': installation.currency_id}" />
+                    <p>
+                      <t t-out="product_entry.total"
+                        t-options="{'widget': 'float', 'precision': 2}" /> €</p>
                   </td>
                 </tr>
               </tbody>
@@ -120,38 +126,46 @@
               </tr>
               <tr>
                 <td align="center">
-                  <t t-out="installation.total_investment"
-                    t-options="{'widget': 'monetary', 'display_currency': installation.currency_id}" />
+                  <p>
+                    <t t-out="installation.total_investment"
+                      t-options="{'widget': 'float', 'precision': 2}" /> €</p>
                 </td>
                 <td align="center">
-                  <t t-out="installation.return_on_investment"
-                    t-options="{'widget': 'float', 'precision': 2}" />
+                  <p>
+                    <t t-out="installation.return_on_investment"
+                      t-options="{'widget': 'float', 'precision': 2}" /> Years </p>
                 </td>
               </tr>
             </table>
             <h5>Hypotheses</h5>
             <table class="table">
               <tr>
-                <td>Current buying price of electricity (not including tax)</td>
+                <td>Current buying price of electricity (excluding tax)</td>
                 <td>
-                  <t t-out="installation.elec_price_buy_today_HT" />
+                  <p>
+                    <t t-out="installation.elec_price_buy_today_HT"
+                      t-options="{'widget': 'float', 'precision': 2}" /> €</p>
                 </td>
               </tr>
-              <td>Current selling price of electricity (not including tax)</td>
+              <td>Current selling price of electricity (excluding tax)</td>
               <td>
-                <t t-out="installation.elec_price_sell_today_HT" />
+                <p>
+                  <t t-out="installation.elec_price_sell_today_HT"
+                    t-options="{'widget': 'float', 'precision': 2}" /> €</p>
               </td>
               <tr>
               </tr>
               <td>Yearly inflation of the cost of electricity</td>
               <td>
-                <t t-out="installation.elec_price_inflation" />
+                <p>
+                  <t t-out="installation.elec_price_inflation" /> % </p>
               </td>
               <tr>
               </tr>
               <td>Self-consumed electricity</td>
               <td>
-                <t t-out="installation.auto_consumption_rate" />
+                <p>
+                  <t t-out="installation.auto_consumption_rate" /> % </p>
               </td>
             </table>
 
@@ -182,35 +196,74 @@
                       t-options="{'widget': 'float', 'precision': 2}" />
                   </td>
                   <td align="center">
-                    <t t-out="yearly_data[i].consumed" t-options="{'widget': 'float', 'precision': 2}" />
+                    <t t-out="yearly_data[i].consumed"
+                      t-options="{'widget': 'float', 'precision': 2}" />
                   </td>
                   <td align="center">
                     <t t-out="yearly_data[i].elec_price_buy"
-                      t-options="{'widget': 'monetary', 'display_currency': installation.currency_id}" />
+                      t-options="{'widget': 'float', 'precision': 2}" />
                   </td>
                   <td align="center">
                     <t t-out="yearly_data[i].elec_economy"
-                      t-options="{'widget': 'monetary', 'display_currency': installation.currency_id}" />
+                      t-options="{'widget': 'float', 'precision': 2}" />
                   </td>
                   <td align="center">
                     <t t-out="yearly_data[i].elec_price_sell"
-                      t-options="{'widget': 'monetary', 'display_currency': installation.currency_id}" />
+                      t-options="{'widget': 'float', 'precision': 2}" />
                   </td>
                   <td align="center">
                     <t t-out="yearly_data[i].elec_gain"
-                      t-options="{'widget': 'monetary', 'display_currency': installation.currency_id}" />
+                      t-options="{'widget': 'float', 'precision': 2}" />
                   </td>
                   <td align="center">
                     <t t-out="yearly_data[i].expenses"
-                      t-options="{'widget': 'monetary', 'display_currency': installation.currency_id}" />
+                      t-options="{'widget': 'float', 'precision': 2}" />
                   </td>
                   <td align="center">
                     <t t-out="yearly_data[i].total_gain"
-                      t-options="{'widget': 'monetary', 'display_currency': installation.currency_id}" />
+                      t-options="{'widget': 'float', 'precision': 2}" />
                   </td>
                   <td align="center">
                     <t t-out="yearly_data[i].cumulated_total"
-                      t-options="{'widget': 'monetary', 'display_currency': installation.currency_id}" />
+                      t-options="{'widget': 'float', 'precision': 2}" />
+                  </td>
+                </tr>
+                <t t-set="cumulated_yearly_data" t-value="installation.get_cumulated_yearly_data()" />
+                <tr>
+                  <td align="center">
+                    <p>Total</p>
+                  </td>
+                  <td align="center">
+                    <t t-out="cumulated_yearly_data.production"
+                      t-options="{'widget': 'float', 'precision': 2}" />
+                  </td>
+                  <td align="center">
+                    <t t-out="cumulated_yearly_data.consumed"
+                      t-options="{'widget': 'float', 'precision': 2}" />
+                  </td>
+                  <td align="center">
+                  </td>
+                  <td align="center">
+                    <t t-out="cumulated_yearly_data.elec_economy"
+                      t-options="{'widget': 'float', 'precision': 2}" />
+                  </td>
+                  <td align="center">
+                  </td>
+                  <td align="center">
+                    <t t-out="cumulated_yearly_data.elec_gain"
+                      t-options="{'widget': 'float', 'precision': 2}" />
+                  </td>
+                  <td align="center">
+                    <t t-out="cumulated_yearly_data.expenses"
+                      t-options="{'widget': 'float', 'precision': 2}" />
+                  </td>
+                  <td align="center">
+                    <t t-out="cumulated_yearly_data.total_gain"
+                      t-options="{'widget': 'float', 'precision': 2}" />
+                  </td>
+                  <td align="center">
+                    <t t-out="cumulated_yearly_data.cumulated_total"
+                      t-options="{'widget': 'float', 'precision': 2}" />
                   </td>
                 </tr>
               </tbody>
