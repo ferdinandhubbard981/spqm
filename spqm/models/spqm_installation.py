@@ -14,9 +14,9 @@ class Installation(models.Model):
     selected_years = fields.Json(default=lambda self: jsonpickle.dumps([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 14, 19, 24]))
     computed_year_count = fields.Integer(default=25)
     name = fields.Char(required=True)
-    client_id = fields.Many2one("res.partner", string="Client")
-    worksite_address = fields.Char(readonly=False)
-    billing_address = fields.Char(readonly=False)
+    client_id = fields.Many2one("res.partner", string="Client", required=True)
+    worksite_address = fields.Char(required=True, readonly=False)
+    billing_address = fields.Char(required=True, readonly=False)
     zone_ids = fields.One2many("spqm.installation.zone", "installation_id", required=True)
     latitude = fields.Float(required=True)
     longitude = fields.Float(required=True)
@@ -25,8 +25,8 @@ class Installation(models.Model):
     elec_price_sell_today_HT = fields.Float(required=True, help="The selling price of electricity in €/kWh excluding tax")
     elecVAT = fields.Float(required=True, help="the VAT of electricity as a %", default=6)
     elec_price_inflation = fields.Float(required=True, default=3)
-    auto_consumption_rate = fields.Float(help="the percentage of the electricity produced that is used on site")
-    offer_validity = fields.Date(help="date after which the offer will be invalid")
+    auto_consumption_rate = fields.Float(required=True, help="the percentage of the electricity produced that is used on site")
+    offer_validity = fields.Date(required=True, help="date after which the offer will be invalid")
 
     # quote-relevant fields
     peak_power = fields.Float(help="The cumulated peak power of all the zones, in kW")
