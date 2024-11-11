@@ -111,6 +111,7 @@ class Installation(models.Model):
                 decimals = ROI_point / difference
                 return_on_investment = year.years_since_installation + decimals
                 record.return_on_investment = return_on_investment
+                break
 
     def _compute_peak_power(self):
         for record in self:
