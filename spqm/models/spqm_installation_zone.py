@@ -12,10 +12,10 @@ class Zone(models.Model):
     solar_panel_id = fields.Many2one("spqm.solar_panel", required=True)
     solar_panel_quantity = fields.Integer(required=True)
     slope = fields.Float(string="Slope (deg)", required=True)
-    azimuth = fields.Float(string="Azimuth (deg)", required=True)
+    azimuth = fields.Float(string="Azimuth (deg)", required=True, help="South=0°, West=90°, East=-90°, north=+-180°")
 
-    monthly_production_list = fields.Json(help="monthly electricity production data from solar panels used for plotting graph")
-    e_y_total = fields.Float(readonly=True, help="total electricity generated per year, as reported by pvgis (not including module degradation)")
+    monthly_production_list = fields.Json(help="Monthly electricity production data from solar panels used for plotting graph")
+    e_y_total = fields.Float(readonly=True, help="Total electricity generated per year, as reported by pvgis (not including module degradation)")
 
     @api.depends('installation_id.latitude', 'installation_id.longitude', 'peak_power', 'loss', 'slope', 'azimuth')
     def _compute_pvgis(self):
@@ -25,7 +25,7 @@ class Zone(models.Model):
                 lat=record.installation_id.latitude,
                 lon=record.installation_id.longitude,
                 peakpower=record.solar_panel_id.peak_power * record.solar_panel_quantity,
-                loss=record.solar_panel_id.loss,
+                loss=record.installation_id.loss,
                 angle=record.slope,
                 aspect=record.azimuth,
                 outputformat='json'

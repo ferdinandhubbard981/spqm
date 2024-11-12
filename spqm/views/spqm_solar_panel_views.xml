@@ -1,6 +1,6 @@
 <odoo>
   <record id="spqm_solar_panel_action" model="ir.actions.act_window">
-    <field name="name">solar_panels</field>
+    <field name="name">Solar Panels</field>
     <field name="res_model">spqm.solar_panel</field>
     <field name="view_mode">list,form</field>
   </record>
@@ -13,7 +13,6 @@
         <field name="name" />
         <field name="price" />
         <field name="peak_power" />
-        <field name="loss" />
         <field name="module_degradation_in_first_year" />
         <field name="module_degradation_for_subsequent_years" />
       </tree>
@@ -29,7 +28,6 @@
           <field name="name" />
           <field name="price" />
           <field name="peak_power" />
-          <field name="loss" />
           <field name="module_degradation_in_first_year" />
           <field name="module_degradation_for_subsequent_years" />
         </group>

@@ -27,7 +27,7 @@
         <sheet>
           <group>
             <field name="name" />
-            <field name="start_year" />
+            <field name="start_year" widget="char"/>
             <field name="elec_price_buy_today_HT" />
             <field name="elec_price_sell_today_HT" />
             <field name="elecVAT" />
@@ -35,6 +35,7 @@
             <field name="longitude" />
             <field name="latitude" />
             <field name="auto_consumption_rate" />
+            <field name="loss"/>
             <field name="zone_ids" />
             <field name="client_id" />
             <field name="worksite_address" />
