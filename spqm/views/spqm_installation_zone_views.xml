@@ -22,6 +22,7 @@
           <field name="solar_panel_quantity" />
           <field name="slope" />
           <field name="azimuth" />
+          <field name="product_entry_ids" />
         </group>
       </form>
     </field>

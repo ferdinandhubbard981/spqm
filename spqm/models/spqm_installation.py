@@ -87,6 +87,10 @@ class Installation(models.Model):
                 product = Product(zone.solar_panel_id.name, zone.solar_panel_id.price)
                 product_entry = ProductEntry(product, zone.solar_panel_quantity)
                 product_entries.append(product_entry)
+                for product_entry_id in zone.product_entry_ids:
+                    product = Product(product_entry_id.product_id.name, product_entry_id.product_id.list_price)
+                    product_entry = ProductEntry(product, product_entry_id.quantity)
+                    product_entries.append(product_entry)
             record.product_entries = jsonpickle.dumps(product_entries)
 
     def _compute_total_investment(self):

@@ -2,3 +2,4 @@ id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
 spqm_installation,spqm_installation,model_spqm_installation,base.group_user,1,1,1,1
 spqm_installation_zone,spqm_installation_zone,model_spqm_installation_zone,base.group_user,1,1,1,1
 spqm_solar_panel,spqm_solar_panel,model_spqm_solar_panel,base.group_user,1,1,1,1
+spqm_product_entry,spqm_product_entry,model_spqm_product_entry,base.group_user,1,1,1,1

@@ -13,6 +13,7 @@ class Zone(models.Model):
     solar_panel_quantity = fields.Integer(required=True)
     slope = fields.Float(string="Slope (deg)", required=True)
     azimuth = fields.Float(string="Azimuth (deg)", required=True, help="South=0°, West=90°, East=-90°, north=+-180°")
+    product_entry_ids = fields.One2many("spqm.product_entry", "zone_id")
 
     monthly_production_list = fields.Json(help="Monthly electricity production data from solar panels used for plotting graph")
     e_y_total = fields.Float(readonly=True, help="Total electricity generated per year, as reported by pvgis (not including module degradation)")
