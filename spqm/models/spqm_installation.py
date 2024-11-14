@@ -125,7 +125,10 @@ class Installation(models.Model):
     @api.depends('total_investment', 'peak_power')
     def _compute_cost_per_watt(self):
         for record in self:
-            record.cost_per_watt = record.total_investment / (record.peak_power * 1000)
+            if record.peak_power == 0:
+                record.cost_per_watt = 0
+            else:
+                record.cost_per_watt = record.total_investment / (record.peak_power * 1000)
 
     @api.depends('start_year', 'elec_price_buy_today_HT', 'elec_price_sell_today_HT', 'elec_price_inflation', 'elecVAT', 'zone_ids', 'auto_consumption_rate', 'total_investment')
     def _compute_yearly_data(self):

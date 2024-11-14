@@ -27,6 +27,9 @@ class Zone(models.Model):
     @api.depends('installation_id.latitude', 'installation_id.longitude', 'installation_id.loss', 'peak_power', 'slope', 'azimuth')
     def _compute_pvgis(self):
         for record in self:
+            if record.peak_power <= 0:
+                record.e_y_total = 0
+                continue
             url = 'https://re.jrc.ec.europa.eu/api/v5_2/PVcalc'
             params = dict(
                 lat=record.installation_id.latitude,
