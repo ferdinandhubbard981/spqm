@@ -18,9 +18,9 @@ class Installation(models.Model):
     worksite_address = fields.Char(required=True, readonly=False)
     billing_address = fields.Char(required=True, readonly=False)
     offer_validity = fields.Date(string="Offer validity", required=True, help="The date after which the offer will be invalid")
-    start_year = fields.Integer(required=True)
-    latitude = fields.Float(required=True)
-    longitude = fields.Float(required=True)
+    start_year = fields.Integer(required=True, help="The year in which the installation will be completed (the calculations will assume that the installation will be finished on 01/01/xxxx, where xxxx is the start year.)")
+    latitude = fields.Float(required=True, help="The latitude position of the worksite")
+    longitude = fields.Float(required=True, help="The longitude position of the worksite")
     elec_price_buy_today_HT = fields.Float(string="Electricity buy price today (excluding tax) €", required=True, help="The buying price of electricity in €/kWh excluding tax")
     elec_price_sell_today_HT = fields.Float(string="Electricity sell price today (excluding tax) €", required=True, help="The selling price of electricity in €/kWh excluding tax")
     elecVAT = fields.Float(string="Electricity VAT %", required=True, default=6)
@@ -28,34 +28,18 @@ class Installation(models.Model):
     auto_consumption_rate = fields.Float(string="Auto consumption rate %", default=37.5, required=True, help="The percentage of the electricity produced that is used on site")
     loss = fields.Float(string="Electrical loss %", required=True, help="The percentage of electricity lost between the solar panels and the house's electrical system", default=14)
     zone_ids = fields.One2many("spqm.installation.zone", "installation_id", required=True)
-    total_peak_power = fields.Float(string="Peak power kW", compute="_compute_total_peak_power", readonly=True)
 
     # quote-relevant fields
-    peak_power = fields.Float(help="The cumulated peak power of all the zones, in kW")
-    cost_per_watt = fields.Float(help="the client cost per watt of peak power from the solar panels")
-    total_investment = fields.Float(help="represents the total investment that the client would make into the installation")
-    return_on_investment = fields.Float(help="client's ROI in years")
-    product_entries = fields.Json(help="the products that are in the quote. These are aggregated from various other fields on the Installation model")
+    peak_power = fields.Float(string="Peak power kW", compute="_compute_peak_power", readonly=True, help="The cumulated peak power of all the zones, in kW")
+    cost_per_watt = fields.Float(string="Cost per watt €/W", readonly=True, compute="_compute_cost_per_watt", help="the client cost per watt of peak power from the solar panels")
+    total_investment = fields.Float(readonly=True, compute="_compute_total_investment", help="represents the total investment that the client would make into the installation")
+    return_on_investment = fields.Float(string="ROI (years)", readonly=True, compute="_compute_ROI", help="client's ROI in years")
+    product_entries = fields.Json(readonly=True, compute="_compute_products", help="the products that are in the quote. These are aggregated from various other fields on the Installation model")
     elec_price_buy_today = fields.Float(compute="_compute_elec_price_buy_today")
     elec_price_sell_today = fields.Float(compute="_compute_elec_price_sell_today")
     monthly_production_list = fields.Json(help="the sum of the monthly production data of all zones, used to plot a graph of production/month")
-    yearly_data = fields.Json(help="financial data regarding the installation for x years post-installation")
+    yearly_data = fields.Json(readonly=True, compute="_compute_yearly_data", help="financial data regarding the installation for x years post-installation")
     cumulated_yearly_data = fields.Json(help="totals of yearly_data")
-    # short_year_list = fields.Float(readonly=True, help="list of years to be displayed in table")
-    # production_total = fields.Float(readonly=True)
-    # production_consumed_total = fields.Float(readonly=True)
-    # production_sold_total = fields.Float(readonly=True)
-    # elec_economy_total = fields.Float(readonly=True)
-    # elec_gain_total = fields.Float(readonly=True)
-    # spending_total = fields.Float(readonly=True)
-
-    @api.depends('zone_ids')
-    def _compute_total_peak_power(self):
-        for record in self:
-            total_peak_power = 0
-            for zone in record.zone_ids:
-                total_peak_power += zone.peak_power
-            record.total_peak_power = total_peak_power
 
     @api.onchange('client_id')
     def _onchange_address(self):
@@ -73,7 +57,7 @@ class Installation(models.Model):
         for record in self:
             record.elec_price_sell_today = record.elec_price_sell_today_HT * (1 + record.elecVAT / 100.0)
 
-    @api.depends('zone_ids')
+    @api.depends('zone_ids.monthly_production_list')
     def _compute_monthly_production(self):
         for record in self:
             zone_monthly_production_list_list = []
@@ -89,6 +73,7 @@ class Installation(models.Model):
 
             record.monthly_production_list = jsonpickle.dumps(monthly_production_list)
 
+    @api.depends('zone_ids.solar_panel_id', 'zone_ids.solar_panel_quantity', 'zone_ids.product_entry_ids')
     def _compute_products(self):
         for record in self:
             product_entries = []
@@ -102,6 +87,7 @@ class Installation(models.Model):
                     product_entries.append(product_entry)
             record.product_entries = jsonpickle.dumps(product_entries)
 
+    @api.depends('product_entries')
     def _compute_total_investment(self):
         for record in self:
             total_investment = 0
@@ -110,6 +96,7 @@ class Installation(models.Model):
                 total_investment += entry.total
             record.total_investment = total_investment
 
+    @api.depends('yearly_data')
     def _compute_ROI(self):
         # call after _compute_yearly_data
         for record in self:
@@ -127,6 +114,7 @@ class Installation(models.Model):
                 record.return_on_investment = return_on_investment
                 break
 
+    @api.depends('zone_ids.solar_panel_id.peak_power', 'zone_ids.solar_panel_quantity')
     def _compute_peak_power(self):
         for record in self:
             peak_power = 0
@@ -134,10 +122,12 @@ class Installation(models.Model):
                 peak_power += zone.solar_panel_id.peak_power * zone.solar_panel_quantity
             record.peak_power = peak_power
 
+    @api.depends('total_investment', 'peak_power')
     def _compute_cost_per_watt(self):
         for record in self:
             record.cost_per_watt = record.total_investment / (record.peak_power * 1000)
 
+    @api.depends('start_year', 'elec_price_buy_today_HT', 'elec_price_sell_today_HT', 'elec_price_inflation', 'elecVAT', 'zone_ids', 'auto_consumption_rate', 'total_investment')
     def _compute_yearly_data(self):
         for record in self:
             yearly_data = []

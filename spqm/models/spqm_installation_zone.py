@@ -15,16 +15,16 @@ class Zone(models.Model):
     azimuth = fields.Float(string="Azimuth (deg)", required=True, help="South=0°, West=90°, East=-90°, north=+-180°")
     product_entry_ids = fields.One2many("spqm.product_entry", "zone_id")
 
-    peak_power = fields.Float(readonly=True, compute="_compute_peak_power")
+    peak_power = fields.Float(string="Peak power kW", readonly=True, compute="_compute_peak_power", help="The peak power of this zone")
     monthly_production_list = fields.Json(help="Monthly electricity production data from solar panels used for plotting graph")
-    e_y_total = fields.Float(readonly=True, help="Total electricity generated per year, as reported by pvgis (not including module degradation)")
+    e_y_total = fields.Float(string="Electricity generated in 1 year kWh", readonly=True, compute="_compute_pvgis", help="Total electricity generated per year, as reported by pvgis (not including module degradation)")
 
     @api.depends('solar_panel_id', 'solar_panel_quantity')
     def _compute_peak_power(self):
         for record in self:
             record.peak_power = record.solar_panel_id.peak_power * record.solar_panel_quantity
 
-    @api.depends('installation_id.latitude', 'installation_id.longitude', 'peak_power', 'loss', 'slope', 'azimuth')
+    @api.depends('installation_id.latitude', 'installation_id.longitude', 'installation_id.loss', 'peak_power', 'slope', 'azimuth')
     def _compute_pvgis(self):
         for record in self:
             url = 'https://re.jrc.ec.europa.eu/api/v5_2/PVcalc'

@@ -28,19 +28,29 @@
           <group>
             <group>
               <field name="name" />
-              <field name="client_id" />
-              <field name="worksite_address" />
-              <field name="billing_address" />
-              <field name="offer_validity" />
             </group>
             <group>
-              <field name="start_year" widget="char" />
-              <field name="longitude" />
-              <field name="latitude" />
+              <field name="peak_power" />
+              <field name="return_on_investment" />
+              <field name="cost_per_watt" />
             </group>
             <!-- <field name=""/> -->
           </group>
           <notebook>
+            <page string="General">
+              <group>
+                <field name="client_id" />
+                <field name="worksite_address" />
+                <field name="billing_address" />
+                <field name="offer_validity" />
+              </group>
+              <group>
+                <field name="start_year" widget="char" />
+                <field name="longitude" />
+                <field name="latitude" />
+              </group>
+
+            </page>
             <page string="Financial">
               <group>
                 <group>
@@ -58,11 +68,8 @@
                 <group>
                   <field name="auto_consumption_rate" />
                   <field name="loss" />
-                  <field name="zone_ids" />
                 </group>
-                <group>
-                  <field name="total_peak_power" />
-                </group>
+                <field name="zone_ids" />
               </group>
             </page>
           </notebook>

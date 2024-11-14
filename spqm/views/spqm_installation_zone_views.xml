@@ -8,6 +8,9 @@
         <field name="solar_panel_quantity" />
         <field name="slope" />
         <field name="azimuth" />
+        <field name="product_entry_ids" />
+        <field name="peak_power" />
+        <field name="e_y_total" />
       </tree>
     </field>
   </record>
@@ -23,6 +26,8 @@
           <field name="slope" />
           <field name="azimuth" />
           <field name="product_entry_ids" />
+          <field name="peak_power" />
+          <field name="e_y_total" />
         </group>
       </form>
     </field>
