@@ -17,17 +17,18 @@ class Installation(models.Model):
     client_id = fields.Many2one("res.partner", string="Client", required=True)
     worksite_address = fields.Char(required=True, readonly=False)
     billing_address = fields.Char(required=True, readonly=False)
-    zone_ids = fields.One2many("spqm.installation.zone", "installation_id", required=True)
+    offer_validity = fields.Date(string="Offer validity", required=True, help="The date after which the offer will be invalid")
+    start_year = fields.Integer(required=True)
     latitude = fields.Float(required=True)
     longitude = fields.Float(required=True)
-    start_year = fields.Integer(required=True)
     elec_price_buy_today_HT = fields.Float(string="Electricity buy price today (excluding tax) €", required=True, help="The buying price of electricity in €/kWh excluding tax")
     elec_price_sell_today_HT = fields.Float(string="Electricity sell price today (excluding tax) €", required=True, help="The selling price of electricity in €/kWh excluding tax")
     elecVAT = fields.Float(string="Electricity VAT %", required=True, default=6)
     elec_price_inflation = fields.Float(string="Electricity inflation %", required=True, default=3)
     auto_consumption_rate = fields.Float(string="Auto consumption rate %", default=37.5, required=True, help="The percentage of the electricity produced that is used on site")
-    offer_validity = fields.Date(string="Offer validity", required=True, help="The date after which the offer will be invalid")
     loss = fields.Float(string="Electrical loss %", required=True, help="The percentage of electricity lost between the solar panels and the house's electrical system", default=14)
+    zone_ids = fields.One2many("spqm.installation.zone", "installation_id", required=True)
+    total_peak_power = fields.Float(string="Peak power kW", compute="_compute_total_peak_power", readonly=True)
 
     # quote-relevant fields
     peak_power = fields.Float(help="The cumulated peak power of all the zones, in kW")
@@ -47,6 +48,14 @@ class Installation(models.Model):
     # elec_economy_total = fields.Float(readonly=True)
     # elec_gain_total = fields.Float(readonly=True)
     # spending_total = fields.Float(readonly=True)
+
+    @api.depends('zone_ids')
+    def _compute_total_peak_power(self):
+        for record in self:
+            total_peak_power = 0
+            for zone in record.zone_ids:
+                total_peak_power += zone.peak_power
+            record.total_peak_power = total_peak_power
 
     @api.onchange('client_id')
     def _onchange_address(self):

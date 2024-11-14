@@ -55,9 +55,14 @@
             </page>
             <page string="Technical">
               <group>
-                <field name="auto_consumption_rate" />
-                <field name="loss" />
-                <field name="zone_ids" />
+                <group>
+                  <field name="auto_consumption_rate" />
+                  <field name="loss" />
+                  <field name="zone_ids" />
+                </group>
+                <group>
+                  <field name="total_peak_power" />
+                </group>
               </group>
             </page>
           </notebook>
