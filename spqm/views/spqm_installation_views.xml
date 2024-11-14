@@ -26,23 +26,41 @@
         </header>
         <sheet>
           <group>
-            <field name="name" />
-            <field name="start_year" widget="char"/>
-            <field name="elec_price_buy_today_HT" />
-            <field name="elec_price_sell_today_HT" />
-            <field name="elecVAT" />
-            <field name="elec_price_inflation" />
-            <field name="longitude" />
-            <field name="latitude" />
-            <field name="auto_consumption_rate" />
-            <field name="loss"/>
-            <field name="zone_ids" />
-            <field name="client_id" />
-            <field name="worksite_address" />
-            <field name="billing_address" />
-            <field name="offer_validity" />
+            <group>
+              <field name="name" />
+              <field name="client_id" />
+              <field name="worksite_address" />
+              <field name="billing_address" />
+              <field name="offer_validity" />
+            </group>
+            <group>
+              <field name="start_year" widget="char" />
+              <field name="longitude" />
+              <field name="latitude" />
+            </group>
             <!-- <field name=""/> -->
           </group>
+          <notebook>
+            <page string="Financial">
+              <group>
+                <group>
+                  <field name="elec_price_buy_today_HT" />
+                  <field name="elec_price_sell_today_HT" />
+                </group>
+                <group>
+                  <field name="elecVAT" />
+                  <field name="elec_price_inflation" />
+                </group>
+              </group>
+            </page>
+            <page string="Technical">
+              <group>
+                <field name="auto_consumption_rate" />
+                <field name="loss" />
+                <field name="zone_ids" />
+              </group>
+            </page>
+          </notebook>
         </sheet>
       </form>
 
