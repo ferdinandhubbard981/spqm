@@ -31,8 +31,10 @@
             </group>
             <group>
               <field name="peak_power" />
-              <field name="return_on_investment" />
               <field name="cost_per_watt" />
+              <field name="total_investment_excluding_tax" />
+              <field name="total_investment" />
+              <field name="return_on_investment" />
             </group>
             <!-- <field name=""/> -->
           </group>
@@ -56,10 +58,11 @@
                 <group>
                   <field name="elec_price_buy_today_HT" />
                   <field name="elec_price_sell_today_HT" />
+                  <field name="elec_price_inflation" />
+                  <field name="elecVAT" />
                 </group>
                 <group>
-                  <field name="elecVAT" />
-                  <field name="elec_price_inflation" />
+                  <field name="installation_tax_rate" />
                 </group>
               </group>
             </page>

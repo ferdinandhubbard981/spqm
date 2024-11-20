@@ -28,10 +28,12 @@ class Installation(models.Model):
     auto_consumption_rate = fields.Float(string="Auto consumption rate %", default=37.5, required=True, help="The percentage of the electricity produced that is used on site")
     loss = fields.Float(string="Electrical loss %", required=True, help="The percentage of electricity lost between the solar panels and the house's electrical system", default=14)
     zone_ids = fields.One2many("spqm.installation.zone", "installation_id", required=True)
+    installation_tax_rate = fields.Float(string="Installation Tax %", required=True, help="Tax rate the installation's cost as a percentage")
 
     # quote-relevant fields
     peak_power = fields.Float(string="Peak power kW", compute="_compute_peak_power", readonly=True, help="The cumulated peak power of all the zones, in kW")
     cost_per_watt = fields.Float(string="Cost per watt €/W", readonly=True, compute="_compute_cost_per_watt", help="the client cost per watt of peak power from the solar panels")
+    total_investment_excluding_tax = fields.Float(readonly=True, compute="_compute_total_investment", help="represents the total investment (excluding tax) that the client would make into the installation")
     total_investment = fields.Float(readonly=True, compute="_compute_total_investment", help="represents the total investment that the client would make into the installation")
     return_on_investment = fields.Float(string="ROI (years)", readonly=True, compute="_compute_ROI", help="client's ROI in years")
     product_entries = fields.Json(readonly=True, compute="_compute_products", help="the products that are in the quote. These are aggregated from various other fields on the Installation model")
@@ -87,14 +89,15 @@ class Installation(models.Model):
                     product_entries.append(product_entry)
             record.product_entries = jsonpickle.dumps(product_entries)
 
-    @api.depends('product_entries')
+    @api.depends('product_entries', 'installation_tax_rate')
     def _compute_total_investment(self):
         for record in self:
-            total_investment = 0
+            investment = 0
             product_entries = record.get_product_entries()
             for entry in product_entries:
-                total_investment += entry.total
-            record.total_investment = total_investment
+                investment += entry.total
+            record.total_investment_excluding_tax = investment
+            record.total_investment = investment * (1 + record.installation_tax_rate / 100)
 
     @api.depends('yearly_data')
     def _compute_ROI(self):
