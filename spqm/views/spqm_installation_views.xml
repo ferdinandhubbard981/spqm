@@ -70,6 +70,7 @@
               <group>
                 <group>
                   <field name="auto_consumption_rate" />
+                  <field name="consumption_cap" />
                   <field name="loss" />
                 </group>
                 <field name="zone_ids" />

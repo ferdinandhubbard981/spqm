@@ -29,6 +29,7 @@ class Installation(models.Model):
     loss = fields.Float(string="Electrical loss %", required=True, help="The percentage of electricity lost between the solar panels and the house's electrical system", default=14)
     zone_ids = fields.One2many("spqm.installation.zone", "installation_id", required=True)
     installation_tax_rate = fields.Float(string="Installation Tax %", required=True, help="Tax rate the installation's cost as a percentage")
+    consumption_cap = fields.Float(string="Consumption Cap kWh", help="maximum yearly consumption of the client's house/building")
 
     # quote-relevant fields
     peak_power = fields.Float(string="Peak power kW", compute="_compute_peak_power", readonly=True, help="The cumulated peak power of all the zones, in kW")
@@ -133,7 +134,7 @@ class Installation(models.Model):
             else:
                 record.cost_per_watt = record.total_investment / (record.peak_power * 1000)
 
-    @api.depends('start_year', 'elec_price_buy_today_HT', 'elec_price_sell_today_HT', 'elec_price_inflation', 'elecVAT', 'zone_ids', 'auto_consumption_rate', 'total_investment')
+    @api.depends('start_year', 'elec_price_buy_today_HT', 'elec_price_sell_today_HT', 'elec_price_inflation', 'elecVAT', 'zone_ids', 'auto_consumption_rate', 'total_investment', 'consumption_cap')
     def _compute_yearly_data(self):
         for record in self:
             yearly_data = []
@@ -152,7 +153,11 @@ class Installation(models.Model):
 
                 current_year.production = production
                 # current_year.production = record.e_y_total * (1 - record.module_degradation_year / 100) ** years_installed
-                current_year.consumed = current_year.production * record.auto_consumption_rate / 100
+                consumed = current_year.production * record.auto_consumption_rate / 100
+                if record.consumption_cap > 0:
+                    if consumed > record.consumption_cap:
+                        consumed = record.consumption_cap
+                current_year.consumed = consumed
                 current_year.elec_economy = current_year.consumed * current_year.elec_price_buy
                 current_year.production_sold = current_year.production - current_year.consumed
                 current_year.elec_gain = current_year.production_sold * current_year.elec_price_sell
