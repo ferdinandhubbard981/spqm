@@ -1,5 +1,5 @@
 from odoo import models, fields, api
-from .util import MonthlyProduction, YearlyData, Product, ProductEntry
+from .util import MonthlyProduction, YearlyData, Product
 import jsonpickle
 from datetime import date
 
@@ -38,7 +38,6 @@ class Installation(models.Model):
     cost_per_watt = fields.Float(string="Cost per watt €/W", readonly=True, compute="_compute_cost_per_watt", help="the client cost per watt of peak power from the solar panels")
     total_investment = fields.Float(readonly=True, compute="_compute_total_investment", help="represents the total investment that the client would make into the installation")
     return_on_investment = fields.Float(string="ROI (years)", readonly=True, compute="_compute_ROI", help="client's ROI in years")
-    product_entries = fields.Json(readonly=True, compute="_compute_products", help="the products that are in the quote. These are aggregated from various other fields on the Installation model")
     elec_price_buy_today = fields.Float(compute="_compute_elec_price_buy_today")
     elec_price_sell_today = fields.Float(compute="_compute_elec_price_sell_today")
     monthly_production_list = fields.Json(help="the sum of the monthly production data of all zones, used to plot a graph of production/month")
@@ -77,19 +76,6 @@ class Installation(models.Model):
 
             record.monthly_production_list = jsonpickle.dumps(monthly_production_list)
 
-    @api.depends('zone_ids.solar_panel_id', 'zone_ids.solar_panel_quantity', 'zone_ids.product_entry_ids')
-    def _compute_products(self):
-        for record in self:
-            product_entries = []
-            for zone in record.zone_ids:
-                product = Product(zone.solar_panel_id.name, zone.solar_panel_id.price)
-                product_entry = ProductEntry(product, zone.solar_panel_quantity)
-                product_entries.append(product_entry)
-                for product_entry_id in zone.product_entry_ids:
-                    product = Product(product_entry_id.product_id.name, product_entry_id.product_id.list_price)
-                    product_entry = ProductEntry(product, product_entry_id.quantity)
-                    product_entries.append(product_entry)
-            record.product_entries = jsonpickle.dumps(product_entries)
 
     @api.depends('total_investment_excluding_tax', 'installation_tax_rate')
     def _compute_total_investment(self):
@@ -204,7 +190,6 @@ class Installation(models.Model):
         for zone in self.zone_ids:
             zone._compute_pvgis()
         self._compute_monthly_production()
-        self._compute_products()
         self._compute_total_investment()
         self._compute_yearly_data()
         self._compute_cumulated_yearly_data()

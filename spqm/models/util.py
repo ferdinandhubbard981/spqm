@@ -4,13 +4,6 @@ class Product:
         self.price = price
 
 
-class ProductEntry:
-    def __init__(self, product: Product, quantity: int):
-        self.product = product
-        self.quantity = quantity
-        self.total = product.price * quantity
-
-
 class MonthlyProduction:
     def __init__(self, month_index, electricity_produced):
         # assumes that E_m_values is sorted in the order of the month each value belongs to (jan -> dec)
