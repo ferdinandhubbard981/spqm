@@ -1,6 +1,7 @@
 from odoo import models, fields, api
 from .util import MonthlyProduction, YearlyData, Product, ProductEntry
 import jsonpickle
+from datetime import date
 
 
 class Installation(models.Model):
@@ -18,23 +19,23 @@ class Installation(models.Model):
     worksite_address = fields.Char(required=True, readonly=False)
     billing_address = fields.Char(required=True, readonly=False)
     offer_validity = fields.Date(string="Offer validity", required=True, help="The date after which the offer will be invalid")
-    start_year = fields.Integer(required=True, help="The year in which the installation will be completed (the calculations will assume that the installation will be finished on 01/01/xxxx, where xxxx is the start year.)")
-    latitude = fields.Float(required=True, help="The latitude position of the worksite")
-    longitude = fields.Float(required=True, help="The longitude position of the worksite")
-    elec_price_buy_today_HT = fields.Float(string="Electricity buy price today (excluding tax) €", required=True, help="The buying price of electricity in €/kWh excluding tax")
-    elec_price_sell_today_HT = fields.Float(string="Electricity sell price today (excluding tax) €", required=True, help="The selling price of electricity in €/kWh excluding tax")
+    start_year = fields.Integer(required=True, default=date.today().year, help="The year in which the installation will be completed (the calculations will assume that the installation will be finished on 01/01/xxxx, where xxxx is the start year.)")
+    latitude = fields.Float(required=True, default=50.841568, help="The latitude position of the worksite")
+    longitude = fields.Float(required=True, default=4.362014, help="The longitude position of the worksite")
+    elec_price_buy_today_HT = fields.Float(string="Electricity buy price today (excluding tax) €", required=True, default=0.38, help="The buying price of electricity in €/kWh excluding tax")
+    elec_price_sell_today_HT = fields.Float(string="Electricity sell price today (excluding tax) €", required=True, default=0.08, help="The selling price of electricity in €/kWh excluding tax")
     elecVAT = fields.Float(string="Electricity VAT %", required=True, default=6)
     elec_price_inflation = fields.Float(string="Electricity inflation %", required=True, default=3)
     auto_consumption_rate = fields.Float(string="Auto consumption rate %", default=37.5, required=True, help="The percentage of the electricity produced that is used on site")
     loss = fields.Float(string="Electrical loss %", required=True, help="The percentage of electricity lost between the solar panels and the house's electrical system", default=14)
     zone_ids = fields.One2many("spqm.installation.zone", "installation_id", required=True)
-    installation_tax_rate = fields.Float(string="Installation Tax %", required=True, help="Tax rate the installation's cost as a percentage")
+    installation_tax_rate = fields.Float(string="Installation Tax %", required=True, default=6, help="Tax rate the installation's cost as a percentage")
+    total_investment_excluding_tax = fields.Float(string="Total installation cost excluding tax", required=True, help="represents the total investment (excluding tax) that the client would make into the installation")
     consumption_cap = fields.Float(string="Consumption Cap kWh", help="maximum yearly consumption of the client's house/building")
 
     # quote-relevant fields
     peak_power = fields.Float(string="Peak power kW", compute="_compute_peak_power", readonly=True, help="The cumulated peak power of all the zones, in kW")
     cost_per_watt = fields.Float(string="Cost per watt €/W", readonly=True, compute="_compute_cost_per_watt", help="the client cost per watt of peak power from the solar panels")
-    total_investment_excluding_tax = fields.Float(readonly=True, compute="_compute_total_investment", help="represents the total investment (excluding tax) that the client would make into the installation")
     total_investment = fields.Float(readonly=True, compute="_compute_total_investment", help="represents the total investment that the client would make into the installation")
     return_on_investment = fields.Float(string="ROI (years)", readonly=True, compute="_compute_ROI", help="client's ROI in years")
     product_entries = fields.Json(readonly=True, compute="_compute_products", help="the products that are in the quote. These are aggregated from various other fields on the Installation model")
@@ -90,15 +91,10 @@ class Installation(models.Model):
                     product_entries.append(product_entry)
             record.product_entries = jsonpickle.dumps(product_entries)
 
-    @api.depends('product_entries', 'installation_tax_rate')
+    @api.depends('total_investment_excluding_tax', 'installation_tax_rate')
     def _compute_total_investment(self):
         for record in self:
-            investment = 0
-            product_entries = record.get_product_entries()
-            for entry in product_entries:
-                investment += entry.total
-            record.total_investment_excluding_tax = investment
-            record.total_investment = investment * (1 + record.installation_tax_rate / 100)
+            record.total_investment = record.total_investment_excluding_tax * (1 + record.installation_tax_rate / 100)
 
     @api.depends('yearly_data')
     def _compute_ROI(self):
@@ -107,7 +103,10 @@ class Installation(models.Model):
             yearly_data = record.get_yearly_data()
             for i, year in enumerate(yearly_data):
                 if year.cumulated_total < 0:
+                    if i == len(yearly_data) - 1: # this is a workaround for when yearly_data is updated with incomplete data, this is because odoo sucks, and @depends doesn't work in a smart way.
+                        record.return_on_investment = -1 
                     continue
+
                 if i == 0:
                     record.return_on_investment = 0
                     break

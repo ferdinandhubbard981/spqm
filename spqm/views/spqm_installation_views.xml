@@ -32,8 +32,6 @@
             <group>
               <field name="peak_power" />
               <field name="cost_per_watt" />
-              <field name="total_investment_excluding_tax" />
-              <field name="total_investment" />
               <field name="return_on_investment" />
             </group>
             <!-- <field name=""/> -->
@@ -48,8 +46,8 @@
               </group>
               <group>
                 <field name="start_year" widget="char" />
-                <field name="longitude" />
                 <field name="latitude" />
+                <field name="longitude" />
               </group>
 
             </page>
@@ -62,7 +60,9 @@
                   <field name="elecVAT" />
                 </group>
                 <group>
+                  <field name="total_investment_excluding_tax" />
                   <field name="installation_tax_rate" />
+                  <field name="total_investment" />
                 </group>
               </group>
             </page>
