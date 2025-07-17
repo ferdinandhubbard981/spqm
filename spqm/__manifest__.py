@@ -10,7 +10,6 @@
         'views/spqm_installation_views.xml',
         'views/spqm_installation_zone_views.xml',
         'views/spqm_solar_panel_views.xml',
-        'views/spqm_product_entry_views.xml',
         'views/spqm_menus.xml'
     ],
     'license': 'Other proprietary'

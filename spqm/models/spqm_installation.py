@@ -1,4 +1,5 @@
 from odoo import models, fields, api
+from odoo.exceptions import UserError
 from .util import MonthlyProduction, YearlyData, Product
 import jsonpickle
 from datetime import date
@@ -32,6 +33,7 @@ class Installation(models.Model):
     installation_tax_rate = fields.Float(string="Installation Tax %", required=True, default=6, help="Tax rate the installation's cost as a percentage")
     total_investment_excluding_tax = fields.Float(string="Total installation cost excluding tax", required=True, help="represents the total investment (excluding tax) that the client would make into the installation")
     consumption_cap = fields.Float(string="Consumption Cap kWh", help="maximum yearly consumption of the client's house/building")
+    inverter_cost = fields.Float(string="Cost of inverter in 15 years", default=1000, required=True, help="this is separate from the cost of installation, and is only used to take account the replacement of the inverter in 15 years")
 
     # quote-relevant fields
     peak_power = fields.Float(string="Peak power kW", compute="_compute_peak_power", readonly=True, help="The cumulated peak power of all the zones, in kW")
@@ -149,6 +151,8 @@ class Installation(models.Model):
                 current_year.expenses = 0
                 if years_installed == 0:
                     current_year.expenses += record.total_investment
+                if years_installed == 14:
+                    current_year.expenses += record.inverter_cost # inverter replacement in 15 years, not much point in repeating for the 30 year mark
                 current_year.total_gain = current_year.elec_economy + current_year.elec_gain - current_year.expenses
                 cumulated_total += current_year.total_gain
                 current_year.cumulated_total = cumulated_total
@@ -187,6 +191,8 @@ class Installation(models.Model):
         return jsonpickle.loads(self.product_entries)
 
     def action_generate_quote(self):
+        if len(self.zone_ids) == 0:
+            raise UserError("You must declare at least 1 zone before generating report")
         for zone in self.zone_ids:
             zone._compute_pvgis()
         self._compute_monthly_production()

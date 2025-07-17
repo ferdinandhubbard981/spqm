@@ -164,6 +164,11 @@
                 <p>
                   <t t-out="installation.auto_consumption_rate" /> % </p>
               </td>
+              <td>Cost of replacing the inverter in 15 years</td>
+              <td>
+                <p>
+                  <t t-out="installation.inverter_cost" /> € </p>
+              </td>
             </table>
 
             <table class="table">

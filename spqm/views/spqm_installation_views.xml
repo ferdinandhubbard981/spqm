@@ -63,6 +63,7 @@
                   <field name="total_investment_excluding_tax" />
                   <field name="installation_tax_rate" />
                   <field name="total_investment" />
+                  <field name="inverter_cost" />
                 </group>
               </group>
             </page>
