@@ -271,6 +271,11 @@
               </tbody>
             </table>
 
+            <div t-if="installation.graph_cumulated_revenue_image" style="page-break-inside:avoid; margin-top:20px;">
+              <img t-att-src="'data:image/png;base64,%s' % (installation.graph_cumulated_revenue_image.decode())"
+                   style="width:100%;max-width:650px;max-height:350px;"/>
+            </div>
+
             <p style="page-break-before:always;"> </p>
 
             <h3>Monthly variance in electricity production</h3>
