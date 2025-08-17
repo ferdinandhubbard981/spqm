@@ -182,8 +182,8 @@
                   <th>Selling price of electricity &#8364;/kWh</th>
                   <th>Sold electricity revenue &#8364;</th>
                   <th>Expenses &#8364;</th>
-                  <th>Total revenue &#8364;</th>
-                  <th>Cumulated revenue &#8364;</th>
+                  <th>Total Profit &#8364;</th>
+                  <th>Cumulated Profit &#8364;</th>
                 </tr>
               </thead>
               <tbody>
