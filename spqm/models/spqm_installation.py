@@ -3,7 +3,10 @@ from odoo.exceptions import UserError
 from .util import MonthlyProduction, YearlyData, Product
 import jsonpickle
 from datetime import date
-
+import base64
+import io
+import logging
+_logger = logging.getLogger(__name__)
 
 class Installation(models.Model):
     _name = "spqm.installation"
@@ -45,6 +48,8 @@ class Installation(models.Model):
     monthly_production_list = fields.Json(help="the sum of the monthly production data of all zones, used to plot a graph of production/month")
     yearly_data = fields.Json(readonly=True, compute="_compute_yearly_data", help="financial data regarding the installation for x years post-installation")
     cumulated_yearly_data = fields.Json(help="totals of yearly_data")
+    graph_cumulated_revenue_image = fields.Binary("Cumulated Revenue Graph", help="PNG graph of cumulated revenue vs years (generated with matplotlib)")
+    graph_monthly_production_image = fields.Binary("Monthly Production Graph", help="PNG bar chart of monthly electricity production (kWh)")
 
     @api.onchange('client_id')
     def _onchange_address(self):
@@ -175,6 +180,81 @@ class Installation(models.Model):
             cumulated_yearly_data.cumulated_total = yearly_data[len(yearly_data) - 1].cumulated_total
             record.cumulated_yearly_data = jsonpickle.dumps(cumulated_yearly_data)
 
+    def _generate_cumulated_revenue_graph(self):
+        """Generate a PNG (base64) of cumulated revenue vs years using matplotlib."""
+        for record in self:
+            try:
+                import matplotlib
+                matplotlib.use('Agg')
+                import matplotlib.pyplot as plt
+            except Exception as e:
+                _logger.error("matplotlib is required to generate the cumulated revenue graph: %s", e)
+                raise UserError("matplotlib python package is required to generate the cumulated revenue graph. Please install it (pip install matplotlib).")
+
+            yearly_data = record.get_yearly_data()
+            if not yearly_data:
+                record.graph_cumulated_revenue_image = False
+                continue
+
+            years = [yd.years_since_installation + 1 for yd in yearly_data]
+            cumulated = [yd.cumulated_total for yd in yearly_data]
+
+            fig, ax = plt.subplots(figsize=(6, 3))
+            ax.plot(years, cumulated, marker='o', linewidth=1.5, color='#1f77b4')
+            ax.set_xlabel("Years since installation")
+            ax.set_ylabel("Cumulated revenue (€)")
+            ax.set_title("Cumulated Revenue Over Time")
+            ax.grid(True, alpha=0.3)
+            # 0 line
+            ax.axhline(0, color='black', linewidth=0.8)
+            # ROI vertical line
+            if record.return_on_investment and record.return_on_investment > 0:
+                ax.axvline(record.return_on_investment, color='green', linestyle='--', linewidth=1, label='ROI Year')
+                ax.legend(loc='best', fontsize='x-small')
+            fig.tight_layout()
+            buffer = io.BytesIO()
+            import matplotlib.pyplot as plt  # ensure same namespace after tight_layout
+            plt.savefig(buffer, format='png', dpi=130)
+            plt.close(fig)
+            buffer.seek(0)
+            record.graph_cumulated_revenue_image = base64.b64encode(buffer.read())
+
+    def _generate_monthly_production_graph(self):
+        """Generate a bar chart (PNG base64) of monthly electricity production (kWh)."""
+        for record in self:
+            try:
+                import matplotlib
+                matplotlib.use('Agg')
+                import matplotlib.pyplot as plt
+            except Exception as e:
+                _logger.error("matplotlib is required to generate the monthly production graph: %s", e)
+                raise UserError("matplotlib python package is required to generate the monthly production graph. Please install it (pip install matplotlib).")
+            try:
+                monthly_list = record.get_monthly_production_list()
+            except Exception:
+                monthly_list = []
+            if not monthly_list:
+                record.graph_monthly_production_image = False
+                continue
+            months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
+            production = [getattr(mp, 'electricity_produced', 0) for mp in monthly_list]
+            fig, ax = plt.subplots(figsize=(6, 3))
+            bars = ax.bar(months, production, color='#ffb347')
+            ax.set_xlabel("Month")
+            ax.set_ylabel("Production (kWh)")
+            ax.set_title("Monthly Electricity Production")
+            ax.grid(axis='y', alpha=0.3)
+            ax.set_ylim(0, max(production) * 1.15 if production else 1)
+            for bar in bars:
+                height = bar.get_height()
+                ax.text(bar.get_x() + bar.get_width()/2, height, f"{height:.0f}", ha='center', va='bottom', fontsize=7, rotation=0)
+            fig.tight_layout()
+            buffer = io.BytesIO()
+            plt.savefig(buffer, format='png', dpi=130)
+            plt.close(fig)
+            buffer.seek(0)
+            record.graph_monthly_production_image = base64.b64encode(buffer.read())
+
     def get_selected_years(self):
         return jsonpickle.loads(self.selected_years)
 
@@ -202,4 +282,6 @@ class Installation(models.Model):
         self._compute_ROI()
         self._compute_peak_power()
         self._compute_cost_per_watt()
+        self._generate_cumulated_revenue_graph()
+        self._generate_monthly_production_graph()
         return self.env.ref("spqm.action_report_spqm_installation").report_action(self)

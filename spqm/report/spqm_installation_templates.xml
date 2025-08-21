@@ -182,8 +182,8 @@
                   <th>Selling price of electricity &#8364;/kWh</th>
                   <th>Sold electricity revenue &#8364;</th>
                   <th>Expenses &#8364;</th>
-                  <th>Total revenue &#8364;</th>
-                  <th>Cumulated revenue &#8364;</th>
+                  <th>Total Profit &#8364;</th>
+                  <th>Cumulated Profit &#8364;</th>
                 </tr>
               </thead>
               <tbody>
@@ -271,9 +271,20 @@
               </tbody>
             </table>
 
+            <div t-if="installation.graph_cumulated_revenue_image" style="page-break-inside:avoid; margin-top:20px;">
+              <img t-att-src="'data:image/png;base64,%s' % (installation.graph_cumulated_revenue_image.decode())"
+                   style="width:100%;max-width:650px;max-height:350px;"/>
+            </div>
+
             <p style="page-break-before:always;"> </p>
 
             <h3>Monthly variance in electricity production</h3>
+
+            <div t-if="installation.graph_monthly_production_image" style="page-break-inside:avoid;margin:15px 0 25px 0;">
+              <img t-att-src="'data:image/png;base64,%s' % (installation.graph_monthly_production_image.decode())"
+                   style="width:100%;max-width:650px;max-height:350px;"/>
+            </div>
+
             <table class="table">
               <thead>
                 <tr>
