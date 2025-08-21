@@ -40,7 +40,7 @@
                 <td>Total installed power</td>
                 <td align="center">
                   <p>
-                    <t t-out="installation.peak_power"
+                    <t t-out="installation.peak_power / 1000.0"
                       t-options="{'widget': 'float', 'precision': 2}" /> kW </p>
                 </td>
               </tr>
@@ -48,7 +48,7 @@
                 <td>Estimated production in first year</td>
                 <td align="center">
                   <p>
-                    <t t-out="installation.get_yearly_data()[0].production"
+                    <t t-out="installation.get_yearly_data()[0].production / 1000.0"
                       t-options="{'widget': 'float', 'precision': 2}" /> kWh </p>
                 </td>
               </tr>

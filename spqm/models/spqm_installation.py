@@ -23,8 +23,8 @@ class Installation(models.Model):
     start_year = fields.Integer(required=True, default=date.today().year, help="The year in which the installation will be completed (the calculations will assume that the installation will be finished on 01/01/xxxx, where xxxx is the start year.)")
     latitude = fields.Float(required=True, default=50.841568, help="The latitude position of the worksite")
     longitude = fields.Float(required=True, default=4.362014, help="The longitude position of the worksite")
-    elec_price_buy_today_HT = fields.Float(string="Electricity buy price today (excluding tax) €", required=True, default=0.38, help="The buying price of electricity in €/kWh excluding tax")
-    elec_price_sell_today_HT = fields.Float(string="Electricity sell price today (excluding tax) €", required=True, default=0.08, help="The selling price of electricity in €/kWh excluding tax")
+    elec_price_buy_today_HT = fields.Float(string="Electricity buy price today (excluding tax) €/kW", required=True, default=0.38, help="The buying price of electricity in €/kWh excluding tax")
+    elec_price_sell_today_HT = fields.Float(string="Electricity sell price today (excluding tax) €/kW", required=True, default=0.08, help="The selling price of electricity in €/kWh excluding tax")
     elecVAT = fields.Float(string="Electricity VAT %", required=True, default=6)
     elec_price_inflation = fields.Float(string="Electricity inflation %", required=True, default=3)
     auto_consumption_rate = fields.Float(string="Auto consumption rate %", default=37.5, required=True, help="The percentage of the electricity produced that is used on site")
@@ -36,7 +36,7 @@ class Installation(models.Model):
     inverter_cost = fields.Float(string="Cost of inverter in 15 years", default=1000, required=True, help="this is separate from the cost of installation, and is only used to take account the replacement of the inverter in 15 years")
 
     # quote-relevant fields
-    peak_power = fields.Float(string="Peak power kW", compute="_compute_peak_power", readonly=True, help="The cumulated peak power of all the zones, in kW")
+    peak_power = fields.Float(string="Peak power W", compute="_compute_peak_power", readonly=True, help="The cumulated peak power of all the zones, in watts")
     cost_per_watt = fields.Float(string="Cost per watt €/W", readonly=True, compute="_compute_cost_per_watt", help="the client cost per watt of peak power from the solar panels")
     total_investment = fields.Float(readonly=True, compute="_compute_total_investment", help="represents the total investment that the client would make into the installation")
     return_on_investment = fields.Float(string="ROI (years)", readonly=True, compute="_compute_ROI", help="client's ROI in years")
@@ -119,7 +119,7 @@ class Installation(models.Model):
             if record.peak_power == 0:
                 record.cost_per_watt = 0
             else:
-                record.cost_per_watt = record.total_investment / (record.peak_power * 1000)
+                record.cost_per_watt = record.total_investment / (record.peak_power)
 
     @api.depends('start_year', 'elec_price_buy_today_HT', 'elec_price_sell_today_HT', 'elec_price_inflation', 'elecVAT', 'zone_ids', 'auto_consumption_rate', 'total_investment', 'consumption_cap')
     def _compute_yearly_data(self):
@@ -128,7 +128,7 @@ class Installation(models.Model):
             cumulated_total = 0
             for year in range(record.start_year, record.start_year + record.computed_year_count):
                 years_installed = year - record.start_year
-
+                print(f"years_installed: {years_installed}")
                 current_year = YearlyData(year, record.start_year)
                 current_year.elec_price_buy = record.elec_price_buy_today_HT * (1 + record.elec_price_inflation / 100) ** years_installed * (1 + record.elecVAT / 100)
                 current_year.elec_price_sell = record.elec_price_sell_today_HT * (1 + record.elec_price_inflation / 100) ** years_installed * (1 + record.elecVAT / 100)
@@ -145,9 +145,9 @@ class Installation(models.Model):
                     if consumed > record.consumption_cap:
                         consumed = record.consumption_cap
                 current_year.consumed = consumed
-                current_year.elec_economy = current_year.consumed * current_year.elec_price_buy
+                current_year.elec_economy = current_year.consumed/1000.0 * current_year.elec_price_buy # price is in eur/kWh whereas consumed is in W
                 current_year.production_sold = current_year.production - current_year.consumed
-                current_year.elec_gain = current_year.production_sold * current_year.elec_price_sell
+                current_year.elec_gain = current_year.production_sold/1000.0 * current_year.elec_price_sell # price is in eur/kWh whereas production_sold is in W
                 current_year.expenses = 0
                 if years_installed == 0:
                     current_year.expenses += record.total_investment

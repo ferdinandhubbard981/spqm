@@ -15,7 +15,7 @@ class Zone(models.Model):
     # User-facing azimuth convention (compass): 0°=North, 90°=East, 180°=South, 270°=West
     azimuth = fields.Float(string="Azimuth (deg)", required=True, help="0°=North, 90°=East, 180°=South, 270°=West (must be in [0,360))")
 
-    peak_power = fields.Float(string="Peak power kW", readonly=True, compute="_compute_peak_power", help="The peak power of this zone")
+    peak_power = fields.Float(string="Peak power W", readonly=True, compute="_compute_peak_power", help="The peak power of this zone in watts")
     monthly_production_list = fields.Json(readonly=True, help="Monthly electricity production data from solar panels used for plotting graph")
     e_y_total = fields.Float(string="Electricity generated in 1 year kWh", readonly=True, compute="_compute_pvgis", help="Total electricity generated per year, as reported by pvgis (not including module degradation)")
 
